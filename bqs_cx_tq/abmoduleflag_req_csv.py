@@ -13,6 +13,7 @@ import os
 import sys
 import csv
 import codecs
+import pandas as pd
 
 sys.path.append(r"F:\BQS_ETL v0.2\lib")
 import dbconfig_importer
@@ -28,14 +29,22 @@ cnx = dbconfig_importer.connect(db_config)
 ####################
 # start_dt & end_dt
 ####################
-if len(sys.argv) > 1:
-    start_dt = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d')
-else:
-    start_dt = datetime.datetime(2017,6,20).replace(hour=0, minute=0, second=0, microsecond=0)
-end_dt = datetime.datetime(2017,10,1).replace(hour=0, minute=0, second=0, microsecond=0)
+#==============================================================================
+# if len(sys.argv) > 1:
+#     start_dt = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d')
+# else:
+#     start_dt = datetime.datetime(2017,7,28).replace(hour=0, minute=0, second=0, microsecond=0)
+# end_dt = datetime.datetime(2017,7,31).replace(hour=0, minute=0, second=0, microsecond=0)
+# 
+# print("start_dt: ", str(start_dt))
+# print("end_dt: ", str(end_dt))
+# #==============================================================================
 
-print("start_dt: ", str(start_dt))
-print("end_dt: ", str(end_dt))
+today = datetime.date.today()
+yesterday = today - datetime.timedelta(days=1)
+
+start_dt = yesterday.strftime('%Y-%m-%d') + " 00:00:00"
+end_dt = today.strftime('%Y-%m-%d') + " 00:00:00"
 
 ###################
 # truncate
@@ -56,8 +65,8 @@ query = ("SELECT a.id, a.req_json "
 
 query_cursor.execute(query, (start_dt, end_dt))
 
-req_csv_file = tmp_dir + '\\'+'abmoduleflag_req'  + ".csv"
-req_csvfile = codecs.open(req_csv_file,'w', 'utf-8')
+req_csv_file = tmp_dir + '\\'+'abmoduleflag_req' + ".csv"
+req_csvfile = codecs.open(req_csv_file,'a+', 'utf-8')
 
 req_writer = csv.writer(req_csvfile)
  
@@ -75,8 +84,8 @@ for (id, req_data) in query_cursor:
     if value_list:
         value_list = [id] +value_result
                  
-    if rows_counter == 0:       
-        req_writer.writerow(header)        
+    #if rows_counter == 0:       
+        #req_writer.writerow(header)        
     req_writer.writerow(value_list)   
     rows_counter += 1
           
@@ -89,3 +98,14 @@ req_csvfile.close()
 end = time.clock()
 print('Running time: %s Seconds'%(end-start))
 
+
+#==============================================================================
+# tq1 = pd.read_csv(r"F:\TQ\tq_change\abmoduleflag_req6.20-7.28.csv")
+# tq2 = pd.read_csv(r"F:\TQ\tq_change\abmoduleflag_req7.28-7.31.csv")
+# 
+# tq = pd.concat([tq1,tq2],axis = 0)
+# 
+# csvfile = tmp_dir + '\\'+ "abmoduleflag_req.csv"
+# tq.to_csv(csvfile,sep=',',index=False ,encoding = 'utf-8')
+# 
+#==============================================================================

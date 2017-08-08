@@ -96,47 +96,47 @@ run;
 %end;
 %mend;
 
-%demo_0(use_database=bjb.ml_Demograph2_all,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_all,class_g=审核处理月份,i=122);
 data demo_res_appr_all;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_rg_all as
-select a.*,b.Rg201706 from var_name_left as a
+select a.*,b.Rg201707 from var_name_left as a
 left join demo_res_appr_all as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_rg_all ;by id;run;
 
-%demo_0(use_database=bjb.ml_Demograph2_xz,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_xz,class_g=审核处理月份,i=122);
 data demo_res_appr_xz;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_rg_xz as
-select a.*,b.Rg201706 from var_name_left as a
+select a.*,b.Rg201707 from var_name_left as a
 left join demo_res_appr_xz as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_rg_xz ;by id;run;
 
-%demo_0(use_database=bjb.ml_Demograph2_fd,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_fd,class_g=审核处理月份,i=122);
 data demo_res_appr_fd;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_rg_fd as
-select a.*,b.Rg201706 from var_name_left as a
+select a.*,b.Rg201707 from var_name_left as a
 left join demo_res_appr_fd as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_rg_fd ;by id;run;
 
-%demo_0(use_database=bjb.ml_Demograph2_A,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_A,class_g=审核处理月份,i=122);
 data demo_res_appr_A;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_rg_A as
-select a.*,b.Rg201706 from var_name_left as a
+select a.*,b.Rg201707 from var_name_left as a
 left join demo_res_appr_A as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_rg_A ;by id;run;
 
-%demo_0(use_database=bjb.ml_Demograph2_B,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_B,class_g=审核处理月份,i=122);
 data demo_res_appr_B;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_rg_B as
-select a.*,b.Rg201706 from var_name_left as a
+select a.*,b.Rg201707 from var_name_left as a
 left join demo_res_appr_B as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_rg_B ;by id;run;
@@ -242,47 +242,47 @@ run;
 %end;
 %mend;
 
-%demo_0(use_database=bjb.ml_Demograph2_all,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_all,class_g=审核处理月份,i=122);
 data demo_res_appr_all;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_all as
-select a.*,b.R201706 from var_name_left as a
+select a.*,b.R201707 from var_name_left as a
 left join demo_res_appr_all as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_all ;by id;run;
 
-%demo_0(use_database=bjb.ml_Demograph2_xz,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_xz,class_g=审核处理月份,i=122);
 data demo_res_appr_xz;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_xz as
-select a.*,b.R201706 from var_name_left as a
+select a.*,b.R201707 from var_name_left as a
 left join demo_res_appr_xz as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_xz ;by id;run;
 
-%demo_0(use_database=bjb.ml_Demograph2_fd,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_fd,class_g=审核处理月份,i=122);
 data demo_res_appr_fd;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_fd as
-select a.*,b.R201706 from var_name_left as a
+select a.*,b.R201707 from var_name_left as a
 left join demo_res_appr_fd as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_fd ;by id;run;
 
-%demo_0(use_database=bjb.ml_Demograph2_A,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_A,class_g=审核处理月份,i=122);
 data demo_res_appr_A;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_A as
-select a.*,b.R201706 from var_name_left as a
+select a.*,b.R201707 from var_name_left as a
 left join demo_res_appr_A as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_A ;by id;run;
 
-%demo_0(use_database=bjb.ml_Demograph2_B,class_g=审核处理月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph2_B,class_g=审核处理月份,i=122);
 data demo_res_appr_B;set demo_res;run;
 proc sql;
 create table demo_res_appr_2_B as
-select a.*,b.R201706 from var_name_left as a
+select a.*,b.R201707 from var_name_left as a
 left join demo_res_appr_B as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_appr_2_B ;by id;run;
@@ -379,47 +379,47 @@ run;
 %end;
 %mend;
 
-%demo_0(use_database=bjb.active_loan_nb_all,class_g=放款月份,i=116);
+%demo_0(use_database=bjb.active_loan_nb_all,class_g=放款月份,i=122);
 data demo_res_loan_all;set demo_res;run;
 proc sql;
 create table demo_res_loan_2_all as
-select a.*,b.L201706 from var_name_left as a
+select a.*,b.L201707 from var_name_left as a
 left join demo_res_loan_all as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_loan_2_all ;by id;run;
 
-%demo_0(use_database=bjb.active_loan_nb_xz,class_g=放款月份,i=116);
+%demo_0(use_database=bjb.active_loan_nb_xz,class_g=放款月份,i=122);
 data demo_res_loan_xz;set demo_res;run;
 proc sql;
 create table demo_res_loan_2_xz as
-select a.*,b.L201706 from var_name_left as a
+select a.*,b.L201707 from var_name_left as a
 left join demo_res_loan_xz as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_loan_2_xz ;by id;run;
 
-%demo_0(use_database=bjb.active_loan_nb_fd,class_g=放款月份,i=116);
+%demo_0(use_database=bjb.active_loan_nb_fd,class_g=放款月份,i=122);
 data demo_res_loan_fd;set demo_res;run;
 proc sql;
 create table demo_res_loan_2_fd as
-select a.*,b.L201706 from var_name_left as a
+select a.*,b.L201707 from var_name_left as a
 left join demo_res_loan_fd as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_loan_2_fd ;by id;run;
 
-%demo_0(use_database=bjb.active_loan_nb_A,class_g=放款月份,i=116);
+%demo_0(use_database=bjb.active_loan_nb_A,class_g=放款月份,i=122);
 data demo_res_loan_A;set demo_res;run;
 proc sql;
 create table demo_res_loan_2_A as
-select a.*,b.L201706 from var_name_left as a
+select a.*,b.L201707 from var_name_left as a
 left join demo_res_loan_A as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_loan_2_A ;by id;run;
 
-%demo_0(use_database=bjb.active_loan_nb_B,class_g=放款月份,i=116);
+%demo_0(use_database=bjb.active_loan_nb_B,class_g=放款月份,i=122);
 data demo_res_loan_B;set demo_res;run;
 proc sql;
 create table demo_res_loan_2_B as
-select a.*,b.L201706 from var_name_left as a
+select a.*,b.L201707 from var_name_left as a
 left join demo_res_loan_B as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_loan_2_B ;by id;run;
@@ -436,11 +436,11 @@ by id;
 if b;
 run;
 proc sort data=demo_res_NB_all_auto;by id;run;
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total).xlsx]NewBooking!r5c24:r837c26';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total).xlsx]NewBooking!r5c27:r1000c29';
 data _null_;
 set Work.demo_res_NB_all_auto;
 file DD;
-put L201706 R201706 Rg201706;
+put L201707 R201707 Rg201707;
 run;
 
 
@@ -452,11 +452,11 @@ by id;
 if b;
 run;
 proc sort data=demo_res_NB_xz_auto;by id;run;
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户).xlsx]NewBooking!r5c24:r837c26';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户).xlsx]NewBooking!r5c27:r1000c29';
 data _null_;
 set Work.demo_res_NB_xz_auto;
 file DD;
-put L201706 R201706 Rg201706;
+put L201707 R201707 Rg201707;
 run;
 
 
@@ -468,11 +468,11 @@ by id;
 if b;
 run;
 proc sort data=demo_res_NB_fd_auto;by id;run;
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷).xlsx]NewBooking!r5c24:r837c26';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷).xlsx]NewBooking!r5c27:r1000c29';
 data _null_;
 set Work.demo_res_NB_fd_auto;
 file DD;
-put L201706 R201706 Rg201706;
+put L201707 R201707 Rg201707;
 run;
 
 /*x "F:\米粒Demographics\Monthly_Demographics(米粒_冠军).xlsx";*/
@@ -483,11 +483,11 @@ by id;
 if b;
 run;
 proc sort data=demo_res_NB_A_auto;by id;run;
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_冠军).xlsx]NewBooking!r5c3:r837c5';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_冠军).xlsx]NewBooking!r5c6:r1000c8';
 data _null_;
 set Work.demo_res_NB_A_auto;
 file DD;
-put L201706 R201706 Rg201706;
+put L201707 R201707 Rg201707;
 run;
 
 /*x "F:\米粒Demographics\Monthly_Demographics(米粒_挑战者).xlsx";*/
@@ -498,9 +498,9 @@ by id;
 if b;
 run;
 proc sort data=demo_res_NB_B_auto;by id;run;
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_挑战者).xlsx]NewBooking!r5c3:r837c5';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_挑战者).xlsx]NewBooking!r5c6:r1000c8';
 data _null_;
 set Work.demo_res_NB_B_auto;
 file DD;
-put L201706 R201706 Rg201706;
+put L201707 R201707 Rg201707;
 run;

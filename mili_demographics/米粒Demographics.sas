@@ -1,13 +1,14 @@
-
 option compress = yes validvarname = any;
 libname dpRaw "D:\mili\Datamart\rawdata\appdp";
 libname dwdata "D:\mili\Datamart\rawdata\dwdata";
 libname submart "D:\mili\Datamart\data";
 libname bjb "F:\Ã×Á£Demographics\data";
 libname repayFin "F:\Ã×Á£ÓâÆÚÈÕ±¨±í\data";
+
 /*proc printto log="F:\Ã×Á£Demographics\Ã×Á£Demographics.txt"  new;*/
 proc printto;run;
 
+********************************************;
 ***set account data;
 data bjb.bill_main;
 set repayFin.bill_main;
@@ -131,6 +132,7 @@ proc sort data=mili_bill_main ;by repay_date;run;
 
 *ÔİÊ±ÈÏÎªbill_main±íµÄcurr_receive_amtÊÇ¼¼Êõ²¿ËãºÃµÄbill_fee_dtlµÄ×ÜºÍ;
 *ÔİÊ±µ±×öÃ×Á£¿Í»§¶¼ÊÇ¶ÔË½¿Û¿î£¬ËùÒÔ²»¼ÓÈë¶Ô¹«»¹¿î²¿·ÖµÄÂß¼­£¬¼òµ¥µã;
+proc delete data=payment ;run;
 %macro get_payment;
 data _null_;
 *ÔçÉÏ;
@@ -200,6 +202,7 @@ proc append base = payment data = temp_result; run;
 data bjb.milipayment_report;
 set payment;
 format ±¨±í±êÇ© $20.;
+if ÕË»§±êÇ©^="Î´·Å¿î";
 if REPAY_DATE-cut_date>=1 and REPAY_DATE-cut_date<=3 then ±¨±í±êÇ©="T_3";
 else if 1<=od_days<=3 then ±¨±í±êÇ©="1one_three";
 else if 4<=od_days<=15 then ±¨±í±êÇ©="2four_fifteen";
@@ -222,23 +225,23 @@ run;
 
 proc sql;
 create table ttd_use as
-select a.apply_code,a.ÉêÇëÌá½»ÔÂ·İ,a.ÉêÇëÍ¨¹ı,a.ÉêÇë¾Ü¾ø,a.¸´´ûÉêÇë,b.RESIDENCE_CITY_NAME,b.JOB_COMPANY_CITY_NAME,a.ÉêÇë½á¹û,a.ÉêÇëÌá½»ÈÕÆÚ,a.À´Ô´ÇşµÀ,a.period,b.DEGREE_NAME,b.MARRIAGE_NAME,b.SEX_NAME,b.ID_CARD,b.RESIDENCE_PROVINCE_NAME,b.RESIDENCE_CONDITION_NAME,
-b.JOB_COMPANY_CONDITION_NAME,b.CURR_JOB_SENIORITY_NAME,b.JOB_COMPANY_PROVINCE_NAME,b.MONTH_SALARY_NAME,c.ÉóºË´¦ÀíÔÂ·İ,c.ÉóºË´¦ÀíÈÕÆÚ,c.refuse_name
-from bjb.apply_submart as a 
+select a.apply_code,a.ÉêÇëÌá½»ÔÂ·İ,a.ÉêÇëÍ¨¹ı,a.ÉêÇë¾Ü¾ø,a.¸´´ûÉêÇë,b.RESIDENCE_CITY_NAME,b.JOB_COMPANY_CITY_NAME,
+a.ÉêÇë½á¹û,a.ÉêÇëÌá½»ÈÕÆÚ,a.À´Ô´ÇşµÀ,a.period,b.DEGREE_NAME,b.MARRIAGE_NAME,b.SEX_NAME,b.ID_CARD,b.RESIDENCE_PROVINCE_NAME,
+b.RESIDENCE_CONDITION_NAME,b.JOB_COMPANY_CONDITION_NAME,b.CURR_JOB_SENIORITY_NAME,b.JOB_COMPANY_PROVINCE_NAME,
+b.MONTH_SALARY_NAME,c.ÉóºË´¦ÀíÔÂ·İ,c.ÉóºË´¦ÀíÈÕÆÚ,c.refuse_name from bjb.apply_submart as a 
 left join bjb.Baseinfo_submart as b on a.user_code=b.user_code
 left join bjb.approval_submart as c on a.apply_code=c.apply_code;
 quit;
 proc sort data=bjb.loanevent_in nodupkey;by apply_code;run;
 proc sql;
 create table ttd_use1 as
-select a.*,b.loc_addresscnt,b.loc_appsl,b.loc_ava_exp,b.loc_callcount,b.loc_zmscore,
-b.loc_calledcount,b.loc_inpast1st_calledtime,b.loc_inpast1st_calltime,
-b.loc_inpast2nd_calledtime,b.loc_inpast2nd_calltime,b.loc_inpast3rd_calledtime,
-b.loc_inpast3rd_calltime,b.loc_phonenum,b.loc_register_date,b.loc_tel_fm_rank,
-b.loc_tel_jm_rank,b.loc_tel_po_rank,b.loc_tel_py_rank,b.loc_tel_qs_rank,
-b.loc_tel_qt_rank,b.loc_tel_ts_rank,b.loc_tel_tx_rank,b.loc_tel_xd_rank,
-b.loc_tel_zn_rank,b.loc_txlsl,b.loc_3mcnt_silent,b.loc_3mmaxcnt_silent,b.loc_1mcnt_silent,b.loc_1mmaxcnt_silent from ttd_use as a
-left join bjb.loanevent_in as  b on a.apply_code=b.apply_code;
+select a.*,b.loc_addresscnt,b.loc_appsl,b.loc_ava_exp,b.loc_callcount,b.loc_zmscore,b.loc_calledcount,
+b.loc_inpast1st_calledtime,b.loc_inpast1st_calltime,b.loc_inpast2nd_calledtime,b.loc_inpast2nd_calltime,
+b.loc_inpast3rd_calledtime,b.loc_inpast3rd_calltime,b.loc_phonenum,b.loc_register_date,b.loc_tel_fm_rank,
+b.loc_tel_jm_rank,b.loc_tel_po_rank,b.loc_tel_py_rank,b.loc_tel_qs_rank,b.loc_tel_qt_rank,b.loc_tel_ts_rank,
+b.loc_tel_tx_rank,b.loc_tel_xd_rank,b.loc_tel_zn_rank,b.loc_txlsl,b.loc_3mcnt_silent,b.loc_3mmaxcnt_silent,
+b.loc_1mcnt_silent,b.loc_1mmaxcnt_silent,b.loc_tqscore,b.ja_distance,b.ag_distance,b.jg_distance,b.×¡Ö·ÓëÊÕ»õµØ¾àÀë,
+b.µ¥Î»ÓëÊÕ»õµØ¾àÀë from ttd_use as a left join bjb.loanevent_in as  b on a.apply_code=b.apply_code;
 quit;
 proc sort data=ttd_use1 nodupkey;by apply_code;run;
 
@@ -417,9 +420,10 @@ proc sort data=ttd_use5 nodupkey;by apply_code;run;
 proc sort data=bjb.Cxfeature nodupkey out=bjb.Cxfeature_na;by apply_code;run;
 proc sql;
 create table ttd_use6 as 
-select a.*,b.app_type_cnt,b.recent_device_available_capacity,b.last1m_callcnt_agg,b.last3m_callcnt_agg,b.last1m_callcnt_rate_in,b.last1m_callcnt_agg_shrt,b.last1m_callcnt_agg_shrt_out,b.last3m_callcnt_agg_shrt,
-b.last3m_callcnt_agg_shrt_out,b.last1m_callcnt_agg_ctct,b.last3m_callcnt_agg_ctct,b.last1m_callcnt_with_emergency,b.last3m_callcnt_with_emergency,b.last1m_callcnt_homeplace,
-b.last3m_callcnt_homeplace,b.last1m_callplc_below_tier3cnt,b.last3m_callplc_below_tier3cnt,b.last1m_callcnt_agg_coll_in,b.last3m_callcnt_agg_coll_in,b.last1m_callcnt_agg_spc_in,
+select a.*,b.app_type_cnt,b.recent_device_available_capacity,b.last1m_callcnt_agg,b.last3m_callcnt_agg,b.last1m_callcnt_rate_in,
+b.last1m_callcnt_agg_shrt,b.last1m_callcnt_agg_shrt_out,b.last3m_callcnt_agg_shrt,b.last3m_callcnt_agg_shrt_out,b.last1m_callcnt_agg_ctct,
+b.last3m_callcnt_agg_ctct,b.last1m_callcnt_with_emergency,b.last3m_callcnt_with_emergency,b.last1m_callcnt_homeplace,b.last3m_callcnt_homeplace,
+b.last1m_callplc_below_tier3cnt,b.last3m_callplc_below_tier3cnt,b.last1m_callcnt_agg_coll_in,b.last3m_callcnt_agg_coll_in,b.last1m_callcnt_agg_spc_in,
 b.last3m_callcnt_agg_spc_in,b.last1m_callplc_mostFreq,b.last3m_callplc_mostFreq,b.app_total_cnt from ttd_use5 as a
 left join bjb.Cxfeature_na as b on a.apply_code=b.apply_code;
 quit;
@@ -456,7 +460,11 @@ data bjb.ml_Demograph;
 set ttd_use7(drop=Ò»ÔÂ¶àÌ¨ ÈıÔÂ¶àÌ¨ ÆßÌì¶àÌ¨);
 input_complete=1;
 *ÁªÏµÈËÍ¨Ñ¶Â¼ÅÅÃû:0-Ã»Ìî,999-ÌîÁËÃ»Í¨¹ı»°,È±Ê§-Ö®Ç°Ã»Õâ¸ö¹¦ÄÜ;
-format ÉêÇëÌá½»ÈÕ  ÉóºË´¦ÀíÈÕ yymmdd10.  
+
+loc_addresscnt1 = input(loc_addresscnt,best12.);
+
+/*format loc_register_date best32.;*/
+format ÉêÇëÌá½»ÈÕ  ÉóºË´¦ÀíÈÕ   
 »¥Í¨µç»°ºÅÂë  ¹ıÈ¥µÚ1¸öÔÂ±»½ĞÊ±³¤ ¹ıÈ¥µÚ2¸öÔÂ±»½ĞÊ±³¤ ¹ıÈ¥µÚ1¸öÔÂÖ÷½ĞÊ±³¤ ¹ıÈ¥µÚ2¸öÔÂÖ÷½ĞÊ±³¤ ¹ıÈ¥µÚ3¸öÔÂ±»½ĞÊ±³¤ ÔÂ¾ùÏû·Ñ½ğ¶î 8.;
 »¥Í¨µç»°ºÅÂë=loc_phonenum;
 ÔÂ¾ùÏû·Ñ½ğ¶î=loc_ava_exp;
@@ -477,26 +485,33 @@ format ÉêÇëÌá½»ÈÕ  ÉóºË´¦ÀíÈÕ yymmdd10.
 
 ÉóºË´¦ÀíÈÕ=mdy(ksubstr(ÉóºË´¦ÀíÈÕÆÚ,6,2),ksubstr(ÉóºË´¦ÀíÈÕÆÚ,9,2),ksubstr(ÉóºË´¦ÀíÈÕÆÚ,1,4));
 ÉêÇëÌá½»ÈÕ=datepart(ÉêÇëÌá½»Ê±¼ä);
-ÍøÁäÔÂ·İ=intck("month",loc_register_date,ÉêÇëÌá½»ÈÕ);
 
 ×¢²áÊ±ÄêÁä=ksubstr(ÉêÇëÌá½»ÈÕÆÚ,1,4)-ksubstr(ID_CARD,7,4);
 
 if JBAA012="1.ÊÇ" then Î´»ñÍøÎÆ="1.ÊÇ";
 if JBAA009="1.ÊÇ" then ÕÕĞèÈË="1.ÊÇ";
 ÉêÇëÌá½»µã=hour(ÉêÇëÌá½»Ê±¼ä);
+
 format  ÍøÁäÊ±³¤ »¥Í¨µç»°ºÅÂëÇø¼ä 
-¹ıÈ¥µÚ1¸öÔÂ±»½ĞÇø¼ä ¹ıÈ¥µÚ1¸öÔÂÖ÷½ĞÇø¼ä 
-¹ıÈ¥µÚ2¸öÔÂ±»½ĞÇø¼ä ¹ıÈ¥µÚ2¸öÔÂÖ÷½ĞÇø¼ä 
-¹ıÈ¥µÚ3¸öÔÂ±»½ĞÇø¼ä ¹ıÈ¥µÚ3¸öÔÂÖ÷½ĞÇø¼ä
-¹ıÈ¥3¸öÔÂ±»½ĞÇø¼ä ¹ıÈ¥3¸öÔÂÖ÷½ĞÇø¼ä 
+¹ıÈ¥µÚ1¸öÔÂ±»½ĞÇø¼ä ¹ıÈ¥µÚ1¸öÔÂÖ÷½ĞÇø¼ä ¹ıÈ¥µÚ2¸öÔÂ±»½ĞÇø¼ä ¹ıÈ¥µÚ2¸öÔÂÖ÷½ĞÇø¼ä 
+¹ıÈ¥µÚ3¸öÔÂ±»½ĞÇø¼ä ¹ıÈ¥µÚ3¸öÔÂÖ÷½ĞÇø¼ä ¹ıÈ¥3¸öÔÂ±»½ĞÇø¼ä ¹ıÈ¥3¸öÔÂÖ÷½ĞÇø¼ä 
 ¹ıÈ¥µÚ1¸öÔÂÖ÷±»½ĞÇø¼ä ¹ıÈ¥µÚ2¸öÔÂÖ÷±»½ĞÇø¼ä ¹ıÈ¥µÚ3¸öÔÂÖ÷±»½ĞÇø¼ä ¹ıÈ¥3¸öÔÂÖ÷±»½ĞÇø¼ä ÔÂ¾ùÏû·Ñ½ğ¶îÇø¼ä
 ÅäÅ¼ÅÅÃû ¸¸Ä¸ÅÅÃû ×ÓÅ®ÅÅÃû ĞÖµÜÅÅÃû ½ãÃÃÅÅÃû Ç×ÊôÅÅÃû Í¬ÊÂÅÅÃû Í¬Ñ§ÅÅÃû ÅóÓÑÅÅÃû ÆäËûÅÅÃû ÊÕ»õµØÖ·Çø¼ä
 SEX_NAME_group age_g MARRIAGE_NAME_g DEGREE_NAME_g period_g JOB_g home_g company_g 
-company_province_g  salary_g loc_appsl_g loc_txlsl_g  ÉêÇëÌá½»µã_g ÆßÌì¶àÌ¨ Ò»ÔÂ¶àÌ¨ ÈıÔÂ¶àÌ¨ 
-Ö¥Âé·ÖÇø¼ä Í¨»°¾àÀëÉêÇëÇø¼ä ½üÈı×î¾²Ä¬Çø¼ä ½üÈı¾²Ä¬Çø¼ä ½üÒ»×î¾²Ä¬Çø¼ä ½üÒ»¾²Ä¬Çø¼ä 
-app¸öÊıÇø¼ä appÖÖÀàÇø¼ä ÊÖÈİÕ¼±È ¹ıÒ»Í¨´Î ¹ıÈıÍ¨´Î ¹ıÒ»±»½Ğ±È ¹ıÒ»¶ÌÍ¨´Î ¹ıÒ»¶ÌÖ÷½Ğ ¹ıÈı¶ÌÍ¨´Î ¹ıÈı¶ÌÖ÷½Ğ ¹ıÒ»½ôÍ¨´Î ¹ıÈı½ôÍ¨´Î ¹ıÒ»»§Í¨´Î ¹ıÈı»§Í¨´Î 
-¹ıÒ»ÈıÏßÍ¨´Î ¹ıÈıÈıÏßÍ¨´Î ×îÒ»±»´ß´Î ×îÈı±»´ß´Î ×îÒ»±»ÌØÊâ´Î  ×îÈı±»ÌØÊâ´Î  $20.;
-format  ×î½üÍ¨»°Ê±¼ä datetime20.;
+salary_g loc_appsl_g loc_txlsl_g  ÉêÇëÌá½»µã_g ÆßÌì¶àÌ¨ Ò»ÔÂ¶àÌ¨ ÈıÔÂ¶àÌ¨ Ö¥Âé·ÖÇø¼ä Í¨»°¾àÀëÉêÇëÇø¼ä ½üÈı×î¾²Ä¬Çø¼ä 
+½üÈı¾²Ä¬Çø¼ä ½üÒ»×î¾²Ä¬Çø¼ä ½üÒ»¾²Ä¬Çø¼ä app¸öÊıÇø¼ä appÖÖÀàÇø¼ä ÊÖÈİÕ¼±È ¹ıÒ»Í¨´Î ¹ıÈıÍ¨´Î ¹ıÒ»±»½Ğ±È ¹ıÒ»¶ÌÍ¨´Î ¹ıÒ»¶ÌÖ÷½Ğ 
+¹ıÈı¶ÌÍ¨´Î ¹ıÈı¶ÌÖ÷½Ğ ¹ıÒ»½ôÍ¨´Î ¹ıÈı½ôÍ¨´Î ¹ıÒ»»§Í¨´Î ¹ıÈı»§Í¨´Î ¹ıÒ»ÈıÏßÍ¨´Î ¹ıÈıÈıÏßÍ¨´Î ×îÒ»±»´ß´Î ×îÈı±»´ß´Î ×îÒ»±»ÌØÊâ´Î  
+×îÈı±»ÌØÊâ´Î ÌìÆô·ÖÇø¼ä µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä ×¡Ö·ÓëGPS¾àÀëÇø¼ä µ¥Î»ÓëGPS¾àÀëÇø¼ä ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä $20.;
+
+length company_province_g $100.;
+format company_province_g $100.;
+
+**¶¨ÒåÈëÍøÊ±¼ä;
+format ÈëÍøÊ±¼ä yymmdd10.;
+ÈëÍøÊ±¼ä=mdy(substr(loc_register_date,6,2),substr(loc_register_date,9,2),substr(loc_register_date,1,4));
+ÍøÁäÔÂ·İ=intck("month",ÈëÍøÊ±¼ä,ÉêÇëÌá½»ÈÕ);
+
+format ×î½üÍ¨»°Ê±¼ä datetime20.;
 ×î½üÍ¨»°Ê±¼ä=dhms(mdy(ksubstr(last_record_time,6,2),ksubstr(last_record_time,9,2),ksubstr(last_record_time,1,4)),ksubstr(last_record_time,12,2),ksubstr(last_record_time,15,2),ksubstr(last_record_time,18,2));
 Í¨»°¾àÀëÉêÇë=sum(ÉêÇëÌá½»Ê±¼ä,-×î½üÍ¨»°Ê±¼ä)/(24*60*60);
 if Í¨»°¾àÀëÉêÇë<0 or last_record_time="" then Í¨»°¾àÀëÉêÇë=.;
@@ -874,10 +889,10 @@ else if  20000<ÔÂ¾ùÏû·Ñ½ğ¶î<=50000 then ÔÂ¾ùÏû·Ñ½ğ¶îÇø¼ä="3.200-500Ôª";
 else if        ÔÂ¾ùÏû·Ñ½ğ¶î>50000 then ÔÂ¾ùÏû·Ñ½ğ¶îÇø¼ä="4.500Ôª+";
 else if ÔÂ¾ùÏû·Ñ½ğ¶î=. then ÔÂ¾ùÏû·Ñ½ğ¶îÇø¼ä="5.ÎŞ";
 
-if loc_addresscnt=0 then ÊÕ»õµØÖ·Çø¼ä="1.0¸ö";
-else if  0<loc_addresscnt<=4 then ÊÕ»õµØÖ·Çø¼ä="2.1-4¸ö";
-else if  loc_addresscnt>4 then ÊÕ»õµØÖ·Çø¼ä="3.4¸ö+";
-else if loc_addresscnt=. then ÊÕ»õµØÖ·Çø¼ä="4.ÎŞ";
+if loc_addresscnt1=0 then ÊÕ»õµØÖ·Çø¼ä="1.0¸ö";
+else if  0<loc_addresscnt1<=4 then ÊÕ»õµØÖ·Çø¼ä="2.1-4¸ö";
+else if  loc_addresscnt1>4 then ÊÕ»õµØÖ·Çø¼ä="3.4¸ö+";
+else if loc_addresscnt1=. then ÊÕ»õµØÖ·Çø¼ä="4.ÎŞ";
 
 if 0<=¹ıÈ¥3¸öÔÂÖ÷±»½ĞÊ±³¤<=27000 then ¹ıÈ¥3¸öÔÂÖ÷±»½ĞÇø¼ä="1.0-450·ÖÖÓ";
 else if  27000<¹ıÈ¥3¸öÔÂÖ÷±»½ĞÊ±³¤<=45000 then ¹ıÈ¥3¸öÔÂÖ÷±»½ĞÇø¼ä="2.450-750·ÖÖÓ";
@@ -1085,6 +1100,81 @@ else if JOB_COMPANY_PROVINCE_NAME="¸ÊËàÊ¡" then company_province_g="620000-¸ÊËàÊ
 else if JOB_COMPANY_PROVINCE_NAME="Çàº£Ê¡" then company_province_g="630000-Çàº£Ê¡";
 else if JOB_COMPANY_PROVINCE_NAME="ÄşÏÄ»Ø×å×ÔÖÎÇø" then company_province_g="640000-ÄşÏÄ»Ø×å×ÔÖÎÇø";
 else if JOB_COMPANY_PROVINCE_NAME="ĞÂ½®Î¬Îá¶û×ÔÖÎÇø" then company_province_g="650000-ĞÂ½®Î¬Îá¶û×ÔÖÎÇø";
+
+if loc_tqscore in (.,0) then ÌìÆô·ÖÇø¼ä="z-Missing";
+else if 0<=loc_tqscore<408 then ÌìÆô·ÖÇø¼ä="1.(0,408)";
+else if loc_tqscore=408 then ÌìÆô·ÖÇø¼ä="2.408";
+else if 408<loc_tqscore<450 then ÌìÆô·ÖÇø¼ä="3.(408,450)";
+else if 450<=loc_tqscore<500 then ÌìÆô·ÖÇø¼ä="4.[450,500)";
+else if 500<=loc_tqscore<550 then ÌìÆô·ÖÇø¼ä="5.[500,550)";
+else if 550<=loc_tqscore<600 then ÌìÆô·ÖÇø¼ä="6.[550,600)";
+else if 600<=loc_tqscore<650 then ÌìÆô·ÖÇø¼ä="7.[600,650)";
+else if 650<=loc_tqscore<850 then ÌìÆô·ÖÇø¼ä="8.[650,850)";
+
+if ja_distance in (.,0) then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="z-Missing";
+else if 0<=ja_distance<0.1 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="1.(0,0.1)";
+else if 0.1<=ja_distance<0.2 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="2.[0.1,0.2)";
+else if 0.2<=ja_distance<0.3 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="3.[0.2,0.3)";
+else if 0.3<=ja_distance<0.4 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="4.[0.3,0.4)";
+else if 0.4<=ja_distance<0.5 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="5.[0.4,0.5)";
+else if 0.5<=ja_distance<1 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="6.[0.5,1)";
+else if 1<=ja_distance<5 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="7.[1,5)";
+else if 5<=ja_distance<10 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="8.[5,10)";
+else if 10<=ja_distance<20 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="9.[10,20)";
+else if 20<=ja_distance<30 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="9_1.[20,30)";
+else if ja_distance>30 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="9_2.[30,6000)";
+
+if ag_distance in (.,0) then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="z-Missing";
+else if 0<=ag_distance<0.1 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="1.(0,0.1)";
+else if 0.1<=ag_distance<0.2 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="2.[0.1,0.2)";
+else if 0.2<=ag_distance<0.3 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="3.[0.2,0.3)";
+else if 0.3<=ag_distance<0.4 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="4.[0.3,0.4)";
+else if 0.4<=ag_distance<0.5 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="5.[0.4,0.5)";
+else if 0.5<=ag_distance<1 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="6.[0.5,1)";
+else if 1<=ag_distance<5 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="7.[1,5)";
+else if 5<=ag_distance<10 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="8.[5,10)";
+else if 10<=ag_distance<20 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="9.[10,20)";
+else if 20<=ag_distance<30 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="9_1.[20,30)";
+else if ag_distance>30 then ×¡Ö·ÓëGPS¾àÀëÇø¼ä="9_2.[30,6000)";
+
+if jg_distance in (.,0) then µ¥Î»ÓëGPS¾àÀëÇø¼ä="z-Missing";
+else if 0<=jg_distance<0.1 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="1.(0,0.1)";
+else if 0.1<=jg_distance<0.2 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="2.[0.1,0.2)";
+else if 0.2<=jg_distance<0.3 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="3.[0.2,0.3)";
+else if 0.3<=jg_distance<0.4 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="4.[0.3,0.4)";
+else if 0.4<=jg_distance<0.5 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="5.[0.4,0.5)";
+else if 0.5<=jg_distance<1 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="6.[0.5,1)";
+else if 1<=jg_distance<5 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="7.[1,5)";
+else if 5<=jg_distance<10 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="8.[5,10)";
+else if 10<=jg_distance<20 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="9.[10,20)";
+else if 20<=jg_distance<30 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="9_1.[20,30)";
+else if jg_distance>30 then µ¥Î»ÓëGPS¾àÀëÇø¼ä="9_2.[30,6000)";
+
+if ×¡Ö·ÓëÊÕ»õµØ¾àÀë in (.,0) then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="z-Missing";
+else if 0<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<0.1 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="1.(0,0.1)";
+else if 0.1<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<0.2 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="2.[0.1,0.2)";
+else if 0.2<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<0.3 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="3.[0.2,0.3)";
+else if 0.3<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<0.4 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="4.[0.3,0.4)";
+else if 0.4<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<0.5 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="5.[0.4,0.5)";
+else if 0.5<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<1 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="6.[0.5,1)";
+else if 1<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<5 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="7.[1,5)";
+else if 5<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<10 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="8.[5,10)";
+else if 10<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<20 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="9.[10,20)";
+else if 20<=×¡Ö·ÓëÊÕ»õµØ¾àÀë<30 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="9_1.[20,30)";
+else if ×¡Ö·ÓëÊÕ»õµØ¾àÀë>30 then ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä="9_2.[30,6000)";
+
+if µ¥Î»ÓëÊÕ»õµØ¾àÀë in (.,0) then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="z-Missing";
+else if 0<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<0.1 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="1.(0,0.1)";
+else if 0.1<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<0.2 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="2.[0.1,0.2)";
+else if 0.2<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<0.3 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="3.[0.2,0.3)";
+else if 0.3<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<0.4 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="4.[0.3,0.4)";
+else if 0.4<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<0.5 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="5.[0.4,0.5)";
+else if 0.5<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<1 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="6.[0.5,1)";
+else if 1<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<5 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="7.[1,5)";
+else if 5<=µ¥Î»ÓëÊÕ»õµØ¾àÀë <10 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="8.[5,10)";
+else if 10<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<20 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="9.[10,20)";
+else if 20<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<30 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="9_1.[20,30)";
+else if µ¥Î»ÓëÊÕ»õµØ¾àÀë>30 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="9_2.[30,6000)";
 run;
 
 
@@ -1100,6 +1190,7 @@ sheet="Õ³ÌùÄ£°å";
 getnames=yes;
 run;
 
+
 **ÌùÉÏABµÄ±êÇ©;
 proc sort data=bjb.apply_flag nodupkey;by apply_code;run;
 proc sort data=bjb.ml_Demograph nodupkey;by apply_code;run;
@@ -1110,3 +1201,8 @@ by apply_code;
 if a;
 run;
 proc sort data = bjb.ml_Demograph nodupkey; by apply_code; run;
+
+
+data submart.ml_Demograph;
+set bjb.ml_Demograph;
+run;

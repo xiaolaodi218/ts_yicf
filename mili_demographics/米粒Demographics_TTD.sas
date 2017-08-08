@@ -86,96 +86,96 @@ run;
 x "F:\米粒Demographics\Monthly_Demographics(米粒_total).xlsx";
 
 **生成demo_res_ttd_all_auto;
-%demo_0(use_database=bjb.ml_Demograph1_all,class_g=申请提交月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph1_all,class_g=申请提交月份,i=122);
 data demo_res_ttd_all;set demo_res;run;
 proc sql;
 create table demo_res_ttd_all_auto as
-select a.*,b.a_201706 from var_name_left as a
+select a.*,b.a_201707 from var_name_left as a
 left join demo_res_ttd_all as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ttd_all_auto ;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total).xlsx]TTD!r5c19:r837c19';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total).xlsx]TTD!r5c21:r1000c21';
 data _null_;
 set Work.demo_res_ttd_all_auto;
 file DD;
-put a_201706;
+put a_201707;
 run;
 
 x "F:\米粒Demographics\Monthly_Demographics(米粒_新客户).xlsx";
 
 **demo_res_ttd_xz_auto;
-%demo_0(use_database=bjb.ml_Demograph1_xz,class_g=申请提交月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph1_xz,class_g=申请提交月份,i=122);
 data demo_res_ttd_xz;set demo_res;run;
 proc sql;
 create table demo_res_ttd_xz_auto as
-select a.*,b.a_201706 from var_name_left as a
+select a.*,b.a_201707 from var_name_left as a
 left join demo_res_ttd_xz as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ttd_xz_auto ;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户).xlsx]TTD!r5c19:r837c19';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户).xlsx]TTD!r5c21:r1000c21';
 data _null_;
 set Work.demo_res_ttd_xz_auto;
 file DD;
-put a_201706;
+put a_201707;
 run;
 
 x "F:\米粒Demographics\Monthly_Demographics(米粒_复贷).xlsx";
 
 **demo_res_ttd_fd_auto;
-%demo_0(use_database=bjb.ml_Demograph1_fd,class_g=申请提交月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph1_fd,class_g=申请提交月份,i=122);
 data demo_res_ttd_fd;set demo_res;run;
 proc sql;
 create table demo_res_ttd_fd_auto as
-select a.*,b.a_201706 from var_name_left as a
+select a.*,b.a_201707 from var_name_left as a
 left join demo_res_ttd_fd as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ttd_fd_auto ;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷).xlsx]TTD!r5c19:r837c19';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷).xlsx]TTD!r5c21:r1000c21';
 data _null_;
 set Work.demo_res_ttd_fd_auto;
 file DD;
-put a_201706;
+put a_201707;
 run;
 
 
 x "F:\米粒Demographics\Monthly_Demographics(米粒_冠军).xlsx";
 
 **demo_res_ttd_A_auto;
-%demo_0(use_database=bjb.ml_Demograph1_A,class_g=申请提交月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph1_A,class_g=申请提交月份,i=122);
 data demo_res_ttd_A;set demo_res;run;
 proc sql;
 create table demo_res_ttd_A_auto as
-select a.*,b.a_201706 from var_name_left as a
+select a.*,b.a_201707 from var_name_left as a
 left join demo_res_ttd_A as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ttd_A_auto ;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_冠军).xlsx]TTD!r5c3:r837c3';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_冠军).xlsx]TTD!r5c5:r1000c5';
 data _null_;
 set Work.demo_res_ttd_A_auto;
 file DD;
-put a_201706;
+put a_201707;
 run;
 
 
 x "F:\米粒Demographics\Monthly_Demographics(米粒_挑战者).xlsx";
 
 **demo_res_ttd_B_auto;
-%demo_0(use_database=bjb.ml_Demograph1_B,class_g=申请提交月份,i=116);
+%demo_0(use_database=bjb.ml_Demograph1_B,class_g=申请提交月份,i=122);
 data demo_res_ttd_B;set demo_res;run;
 proc sql;
 create table demo_res_ttd_B_auto as
-select a.*,b.a_201706 from var_name_left as a
+select a.*,b.a_201707 from var_name_left as a
 left join demo_res_ttd_B as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ttd_B_auto ;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_挑战者).xlsx]TTD!r5c3:r837c3';
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_挑战者).xlsx]TTD!r5c5:r1000c5';
 data _null_;
 set Work.demo_res_ttd_B_auto;
 file DD;
-put a_201706;
+put a_201707;
 run;

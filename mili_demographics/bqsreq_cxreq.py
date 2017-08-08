@@ -14,8 +14,10 @@ tmp_dir = r"D:\mili\Datamart\pyscript\submart"
 bqs1 = pd.read_csv(r"F:\BQS\tmp\req_bqsloan2016_12.1-6.28.csv")
 bqs2 = pd.read_csv(r"F:\BQS\tmp\req_bqsloan2017_6.28-7.12.csv")
 bqs3 = pd.read_csv(r"F:\BQS\tmp\req_bqsloan2017_7.12-7.20.csv")
+bqs4 = pd.read_csv(r"F:\BQS\tmp\req_bqsloan2017_7.20-8.1.csv")
 
-bqsreq1 = pd.concat([bqs1,bqs2,bqs3],axis = 0)
+
+bqsreq1 = pd.concat([bqs1,bqs2,bqs3,bqs4],axis = 0)
 
 bqsreq = bqsreq1[["id","loc_addresscnt","loc_appsl","loc_ava_exp","loc_ava_limit","loc_callcount","loc_calledcount","loc_inpast1st_calledtime","loc_inpast1st_calltime",
 						 "loc_inpast2nd_calledtime","loc_inpast2nd_calltime","loc_inpast3rd_calledtime","loc_inpast3rd_calltime","loc_limit","loc_phonenum","loc_register_date", 
@@ -42,8 +44,9 @@ creditx1 = pd.read_csv(r"F:\CreditX\tmp\req_Creditx2016_12.1-2017_5.11.csv")
 creditx2 = pd.read_csv(r"F:\CreditX\tmp\req_Creditx2017_5.11-6.28.csv")
 creditx3 = pd.read_csv(r"F:\CreditX\tmp\req_Creditx2017_6.28-7.6.csv")
 creditx4 = pd.read_csv(r"F:\CreditX\tmp\req_Creditx2017_7.6-7.20.csv")
+creditx5 = pd.read_csv(r"F:\CreditX\tmp\req_Creditx2017_7.20-8.1.csv")
 
-CreditX = pd.concat([creditx1,creditx2,creditx3,creditx4],axis = 0)
+CreditX = pd.concat([creditx1,creditx2,creditx3,creditx4,creditx5],axis = 0)
 
 writerfile = ExcelWriter(tmp_dir + '\\' + 'cxreq.xlsx')
 CreditX.to_excel(writerfile,header=True,index=False)
@@ -53,12 +56,12 @@ writerfile.save()
 
 import csv
 import pandas as pd
-from pandas.io.excel import ExcelWriter
+ from pandas.io.excel import ExcelWriter
 
 tmp_dir = r"D:\mili\Datamart\pyscript\submart"
 
-tq1 = pd.read_csv(r"F:\TQ\tmp\tq_dec_temp6.19-7.20.csv.csv")
-tq2 = pd.read_csv(r"F:\TQ\tmp\tq_dec_temp7.20-7.21.csv.csv")
+tq1 = pd.read_csv(r"F:\TQ\tmp\tq_dec_temp6.19-7.20.csv")
+tq2 = pd.read_csv(r"F:\TQ\tmp\tq_dec_temp7.20-8.1.csv")
 
 tq = pd.concat([tq1,tq2],axis = 0)
 
