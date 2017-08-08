@@ -1,5 +1,5 @@
-*********************************
-**ÀûÓÃ¾­Î³¶È¼ÆËã¾àÀë
+ï»¿*********************************
+**åˆ©ç”¨ç»çº¬åº¦è®¡ç®—è·ç¦»
 *********************************;
 option compress = yes validvarname = any;
 
@@ -8,16 +8,16 @@ libname dpRaw "D:\mili\Datamart\rawdata\appdp";
 libname dwdata "D:\mili\Datamart\rawdata\dwdata";
 libname submart "D:\mili\Datamart\data";
 
-*************************************************************************************************************************£»
-**¼ÆËãÒÑÓĞµÄ¾­Î³¶ÈÖ®¼äµÄ¾àÀëÊı¾İ;
+*************************************************************************************************************************ï¼›
+**è®¡ç®—å·²æœ‰çš„ç»çº¬åº¦ä¹‹é—´çš„è·ç¦»æ•°æ®;
 
-**GPSµØÖ·;
+**GPSåœ°å€;
 data dis_GPS;
 set dpRaw.apply_info(keep = apply_code user_code gps_address longitude latitude );
 rename latitude=GPS_latitude longitude=GPS_longitude;
 run;
 
-**×¡Ö·ºÍ¹«Ë¾×¡Ö· ;
+**ä½å€å’Œå…¬å¸ä½å€ ;
 data address_job;
 set lendRaw.user_base_info(keep=user_code residence_address residence_latitude residence_longitude job_company_address job_company_latitude job_company_longitude);
 run;
@@ -30,7 +30,7 @@ by user_code;
 if a;
 run;
 
-**ÖĞ¹ú¾­Î³¶ÈµÄ´óÖÂ·¶Î§;
+**ä¸­å›½ç»çº¬åº¦çš„å¤§è‡´èŒƒå›´;
 /*data distance;*/
 /*set ss;*/
 /*if 0<= residence_latitude <50 and 75<residence_longitude<140 or*/
@@ -41,7 +41,7 @@ run;
 
 proc sort data = distance nodupkey; by apply_code; run;
 
-**µ¥Î»µØÖ·ºÍ¾Ó×¡µØÖ·¾àÀë;
+**å•ä½åœ°å€å’Œå±…ä½åœ°å€è·ç¦»;
 data job_address;
 set distance;
 lon1 = job_company_longitude *constant('pi')/180;
@@ -55,11 +55,11 @@ a = sin(dlat/2)*sin(dlat/2) + cos(lat1) * cos(lat2) * sin(dlon/2)*sin(dlon/2);
 c = 2 * arsin(sqrt(a)); 
 ja_distance = c * 6371;
 
-label ja_distance=µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀë(km);
+label ja_distance=å•ä½åœ°å€å’Œä½å€è·ç¦»(km);
 keep apply_code residence_address job_company_address ja_distance;
 run;
 
-**×¡Ö·ÓëGPS¾àÀë;
+**ä½å€ä¸GPSè·ç¦»;
 data address_GPS;
 set distance;
 lon1 = GPS_longitude*constant('pi')/180;
@@ -73,11 +73,11 @@ a = sin(dlat/2)*sin(dlat/2) + cos(lat1) * cos(lat2) * sin(dlon/2)*sin(dlon/2);
 c = 2 * arsin(sqrt(a)); 
 ag_distance = c * 6371;
 
-label ag_distance=×¡Ö·ÓëGPS¾àÀë(km);
+label ag_distance=ä½å€ä¸GPSè·ç¦»(km);
 keep apply_code residence_address gps_address ag_distance;
 run;
 
-**µ¥Î»ÓëGPS¾àÀë;
+**å•ä½ä¸GPSè·ç¦»;
 data job_GPS;
 set distance;
 
@@ -92,7 +92,7 @@ a = sin(dlat/2)*sin(dlat/2) + cos(lat1) * cos(lat2) * sin(dlon/2)*sin(dlon/2);
 c = 2 * arsin(sqrt(a)); 
 jg_distance = c * 6371;
 
-label jg_distance=µ¥Î»ÓëGPS¾àÀë(km);
+label jg_distance=å•ä½ä¸GPSè·ç¦»(km);
 keep apply_code job_company_address gps_address jg_distance ;
 run;
 
@@ -100,7 +100,7 @@ proc sort data = job_address nodupkey; by apply_code; run;
 proc sort data = address_GPS nodupkey; by apply_code; run;
 proc sort data = job_GPS nodupkey; by apply_code; run;
 
-**ÖĞ¹úÄÏ±±ºÍ¶«Î÷×î´ó¾àÀë²»³¬¹ı6000km£¬³¬¹ı6000kmµÄÖµ¶¼ÒªÈ¥µô;
+**ä¸­å›½å—åŒ—å’Œä¸œè¥¿æœ€å¤§è·ç¦»ä¸è¶…è¿‡6000kmï¼Œè¶…è¿‡6000kmçš„å€¼éƒ½è¦å»æ‰;
 data dis_tance;
 merge job_address(in=a) address_GPS(in=b) job_GPS(in=c);
 by apply_code;
@@ -111,9 +111,9 @@ if ja_distance>6000 then ja_distance = .;
 run;
 
 **********************************************************************************************************;
-**½âÎö»ù±¾¹æÔòÀïÃæÊÕ»õµØÖ·Êı¾İ;
+**è§£æåŸºæœ¬è§„åˆ™é‡Œé¢æ”¶è´§åœ°å€æ•°æ®;
 
-***µçÉÌÊı¾İ**ÊÕ»õµØÖ·;
+***ç”µå•†æ•°æ®**æ”¶è´§åœ°å€;
 proc sort data=submart.apply_flag nodupkey;by apply_code;run;
 
 data ds_data_jbgz;
@@ -122,34 +122,34 @@ run;
 proc sort data = ds_data_jbgz; by apply_code; run;
 
 data ds_data;
-set ds_data_jbgz(keep = apply_code rule_name_normal memo id main_info_id rule_name ¹æÔòÃüÖĞÔÂ·İ ¹æÔòÃüÖĞÈÕÆÚ);
-if rule_name_normal="JBAA018_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ100M" or 
-rule_name_normal="JBAA019_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ100M" or 
-rule_name_normal="JBAA022_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA023_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ300M" or 
-rule_name_normal="JBAA024_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ400M" or 
-rule_name_normal="JBAA025_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ500M" or
-rule_name_normal="JBAA026_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA027_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ300M" or 
-rule_name_normal="JBAA028_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ400M" or 
-rule_name_normal="JBAA029_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ500M" or
-rule_name_normal="JBAA030_µ¥Î»ÓëÊÕ»õµØ¾àÀë´óÓÚ500M" or 
-rule_name_normal="JBAA031_×¡Ö·ÓëÊÕ»õµØ¾àÀë´óÓÚ500M" or 
-rule_name_normal="JBAA032_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ500M" or 
-rule_name_normal="JBAA033_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ500M" or 
-rule_name_normal="JBAA034_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ400M" or
-rule_name_normal="JBAA035_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ300M" or
-rule_name_normal="JBAA036_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA037_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ100M" or
-rule_name_normal="JBAA038_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ400M" or
-rule_name_normal="JBAA039_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ300M" or
-rule_name_normal="JBAA040_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA041_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ100M" or
-rule_name_normal="JBAA042_×¡Ö·ÓëGPS¾àÀë´óÓÚ500M" or
-rule_name_normal="JBAA043_µ¥Î»ÓëGPS¾àÀë´óÓÚ500M";
+set ds_data_jbgz(keep = apply_code rule_name_normal memo id main_info_id rule_name è§„åˆ™å‘½ä¸­æœˆä»½ è§„åˆ™å‘½ä¸­æ—¥æœŸ);
+if rule_name_normal="JBAA018_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº100M" or 
+rule_name_normal="JBAA019_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº100M" or 
+rule_name_normal="JBAA022_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº200M" or
+rule_name_normal="JBAA023_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº300M" or 
+rule_name_normal="JBAA024_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº400M" or 
+rule_name_normal="JBAA025_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº500M" or
+rule_name_normal="JBAA026_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº200M" or
+rule_name_normal="JBAA027_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº300M" or 
+rule_name_normal="JBAA028_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº400M" or 
+rule_name_normal="JBAA029_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº500M" or
+rule_name_normal="JBAA030_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å¤§äº500M" or 
+rule_name_normal="JBAA031_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å¤§äº500M" or 
+rule_name_normal="JBAA032_ä½å€ä¸GPSè·ç¦»å°äº500M" or 
+rule_name_normal="JBAA033_å•ä½ä¸GPSè·ç¦»å°äº500M" or 
+rule_name_normal="JBAA034_å•ä½ä¸GPSè·ç¦»å°äº400M" or
+rule_name_normal="JBAA035_å•ä½ä¸GPSè·ç¦»å°äº300M" or
+rule_name_normal="JBAA036_å•ä½ä¸GPSè·ç¦»å°äº200M" or
+rule_name_normal="JBAA037_å•ä½ä¸GPSè·ç¦»å°äº100M" or
+rule_name_normal="JBAA038_ä½å€ä¸GPSè·ç¦»å°äº400M" or
+rule_name_normal="JBAA039_ä½å€ä¸GPSè·ç¦»å°äº300M" or
+rule_name_normal="JBAA040_ä½å€ä¸GPSè·ç¦»å°äº200M" or
+rule_name_normal="JBAA041_ä½å€ä¸GPSè·ç¦»å°äº100M" or
+rule_name_normal="JBAA042_ä½å€ä¸GPSè·ç¦»å¤§äº500M" or
+rule_name_normal="JBAA043_å•ä½ä¸GPSè·ç¦»å¤§äº500M";
 run;
 
-**²ğ·Ömemo;
+**æ‹†åˆ†memo;
 data t;set ds_data;
 max=length(compress(memo,'#','k'))+1;
 run;
@@ -161,13 +161,13 @@ memo1=scan(memo,idd,'#');output;
 end;
 run;
 
-**½ØÈ¡µô¾àÀë:;
+**æˆªå–æ‰è·ç¦»:;
 data rr; 
 set b;
-memo2=tranwrd(memo1,'¾àÀë£º','');
+memo2=tranwrd(memo1,'è·ç¦»ï¼š','');
 run;
 
-**Ç¿ÖÆÀàĞÍ×ª»»;
+**å¼ºåˆ¶ç±»å‹è½¬æ¢;
 data ss;
 set rr;
 format memo3 best12.;
@@ -175,67 +175,67 @@ memo3=strip(memo2);
 run;
 
 proc sql;
-create table ds_goods as select apply_code,rule_name_normal,id ,main_info_id ,rule_name,¹æÔòÃüÖĞÔÂ·İ, ¹æÔòÃüÖĞÈÕÆÚ,memo,min(memo3) as min_memo from 
-ss group by apply_code,rule_name_normal,id ,main_info_id ,rule_name,¹æÔòÃüÖĞÔÂ·İ, ¹æÔòÃüÖĞÈÕÆÚ,memo;
+create table ds_goods as select apply_code,rule_name_normal,id ,main_info_id ,rule_name,è§„åˆ™å‘½ä¸­æœˆä»½, è§„åˆ™å‘½ä¸­æ—¥æœŸ,memo,min(memo3) as min_memo from 
+ss group by apply_code,rule_name_normal,id ,main_info_id ,rule_name,è§„åˆ™å‘½ä¸­æœˆä»½, è§„åˆ™å‘½ä¸­æ—¥æœŸ,memo;
 quit;
 
-**×¡Ö·ÓëÊÕ»õµØÖ·Ö®¼ä¾àÀë;
+**ä½å€ä¸æ”¶è´§åœ°å€ä¹‹é—´è·ç¦»;
 data address_goods;
 set ds_goods;
-if rule_name_normal="JBAA018_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ100M" or 
-rule_name_normal="JBAA022_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA023_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ300M" or 
-rule_name_normal="JBAA024_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ400M" or 
-rule_name_normal="JBAA025_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ500M" or
-rule_name_normal="JBAA031_×¡Ö·ÓëÊÕ»õµØ¾àÀë´óÓÚ500M";
-rule_name_normal = "×¡Ö·ÓëÊÕ»õµØ¾àÀë";
+if rule_name_normal="JBAA018_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº100M" or 
+rule_name_normal="JBAA022_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº200M" or
+rule_name_normal="JBAA023_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº300M" or 
+rule_name_normal="JBAA024_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº400M" or 
+rule_name_normal="JBAA025_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº500M" or
+rule_name_normal="JBAA031_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å¤§äº500M";
+rule_name_normal = "ä½å€ä¸æ”¶è´§åœ°è·ç¦»";
 drop rule_name memo;
 min_memo =min_memo *0.001;
-rename min_memo=×¡Ö·ÓëÊÕ»õµØ¾àÀë;
+rename min_memo=ä½å€ä¸æ”¶è´§åœ°è·ç¦»;
 run;
 
-**µ¥Î»ÓëÊÕ»õµØÖ·Ö®¼äµÄ¾àÀë;
+**å•ä½ä¸æ”¶è´§åœ°å€ä¹‹é—´çš„è·ç¦»;
 data company_goods;
 set ds_goods;
-if rule_name_normal="JBAA019_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ100M" or 
-rule_name_normal="JBAA026_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA027_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ300M" or 
-rule_name_normal="JBAA028_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ400M" or 
-rule_name_normal="JBAA029_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ500M" or
-rule_name_normal="JBAA030_µ¥Î»ÓëÊÕ»õµØ¾àÀë´óÓÚ500M";
-rule_name_normal = "µ¥Î»ÓëÊÕ»õµØ¾àÀë";
+if rule_name_normal="JBAA019_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº100M" or 
+rule_name_normal="JBAA026_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº200M" or
+rule_name_normal="JBAA027_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº300M" or 
+rule_name_normal="JBAA028_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº400M" or 
+rule_name_normal="JBAA029_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº500M" or
+rule_name_normal="JBAA030_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å¤§äº500M";
+rule_name_normal = "å•ä½ä¸æ”¶è´§åœ°è·ç¦»";
 min_memo =min_memo *0.001;
-rename min_memo=µ¥Î»ÓëÊÕ»õµØ¾àÀë;
+rename min_memo=å•ä½ä¸æ”¶è´§åœ°è·ç¦»;
 drop rule_name memo;
 run;
 
-**×¡Ö·ÓëGPSÖ®¼äµÄ¾àÀë;
+**ä½å€ä¸GPSä¹‹é—´çš„è·ç¦»;
 data address_gps;
 set ds_goods;
-if rule_name_normal="JBAA038_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ400M" or
-rule_name_normal="JBAA039_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ300M" or
-rule_name_normal="JBAA040_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA041_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ100M" or
-rule_name_normal="JBAA042_×¡Ö·ÓëGPS¾àÀë´óÓÚ500M" or
-rule_name_normal="JBAA032_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ500M";
-rule_name_normal = "×¡Ö·ÓëGPS¾àÀë";
+if rule_name_normal="JBAA038_ä½å€ä¸GPSè·ç¦»å°äº400M" or
+rule_name_normal="JBAA039_ä½å€ä¸GPSè·ç¦»å°äº300M" or
+rule_name_normal="JBAA040_ä½å€ä¸GPSè·ç¦»å°äº200M" or
+rule_name_normal="JBAA041_ä½å€ä¸GPSè·ç¦»å°äº100M" or
+rule_name_normal="JBAA042_ä½å€ä¸GPSè·ç¦»å¤§äº500M" or
+rule_name_normal="JBAA032_ä½å€ä¸GPSè·ç¦»å°äº500M";
+rule_name_normal = "ä½å€ä¸GPSè·ç¦»";
 min_memo =min_memo *0.001;
-rename min_memo=×¡Ö·ÓëGPS¾àÀë;
+rename min_memo=ä½å€ä¸GPSè·ç¦»;
 drop rule_name memo;
 run;
 
-**µ¥Î»ÓëGPSÖ®¼äµÄ¾àÀë;
+**å•ä½ä¸GPSä¹‹é—´çš„è·ç¦»;
 data company_gps;
 set ds_goods;
-if rule_name_normal="JBAA033_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ500M" or 
-rule_name_normal="JBAA034_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ400M" or
-rule_name_normal="JBAA035_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ300M" or
-rule_name_normal="JBAA036_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA037_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ100M" or
-rule_name_normal="JBAA043_µ¥Î»ÓëGPS¾àÀë´óÓÚ500M";
-rule_name_normal = "µ¥Î»ÓëGPS¾àÀë";
+if rule_name_normal="JBAA033_å•ä½ä¸GPSè·ç¦»å°äº500M" or 
+rule_name_normal="JBAA034_å•ä½ä¸GPSè·ç¦»å°äº400M" or
+rule_name_normal="JBAA035_å•ä½ä¸GPSè·ç¦»å°äº300M" or
+rule_name_normal="JBAA036_å•ä½ä¸GPSè·ç¦»å°äº200M" or
+rule_name_normal="JBAA037_å•ä½ä¸GPSè·ç¦»å°äº100M" or
+rule_name_normal="JBAA043_å•ä½ä¸GPSè·ç¦»å¤§äº500M";
+rule_name_normal = "å•ä½ä¸GPSè·ç¦»";
 min_memo =min_memo *0.001;
-rename min_memo=µ¥Î»ÓëGPS¾àÀë;
+rename min_memo=å•ä½ä¸GPSè·ç¦»;
 drop rule_name memo;
 run;
 
@@ -255,20 +255,20 @@ proc sort data=distance_goods nodupkey ;by apply_code;run;
 
 proc sort data = dis_tance nodupkey; by apply_code; run;
 
-**Æ´½ÓÁ½²¿·ÖÊı¾İ£¬²¢½«ºóÕßµÄ²¿·ÖÊı¾İÌî³äµ½Ç°ÕßÀïÃæ;
+**æ‹¼æ¥ä¸¤éƒ¨åˆ†æ•°æ®ï¼Œå¹¶å°†åè€…çš„éƒ¨åˆ†æ•°æ®å¡«å……åˆ°å‰è€…é‡Œé¢;
 data submart.every_distance;
 merge dis_tance(in=a) distance_goods(in=b);
 by apply_code;
 if a;
-if ag_distance="." then ag_distance=×¡Ö·ÓëGPS¾àÀë;
-if jg_distance="." then jg_distance=µ¥Î»ÓëGPS¾àÀë;
-drop rule_name_normal id main_info_id ¹æÔòÃüÖĞÔÂ·İ ¹æÔòÃüÖĞÈÕÆÚ ×¡Ö·ÓëGPS¾àÀë µ¥Î»ÓëGPS¾àÀë;
+if ag_distance="." then ag_distance=ä½å€ä¸GPSè·ç¦»;
+if jg_distance="." then jg_distance=å•ä½ä¸GPSè·ç¦»;
+drop rule_name_normal id main_info_id è§„åˆ™å‘½ä¸­æœˆä»½ è§„åˆ™å‘½ä¸­æ—¥æœŸ ä½å€ä¸GPSè·ç¦» å•ä½ä¸GPSè·ç¦»;
 run;
 
 proc sort data = submart.every_distance nodupkey; by apply_code; run;
 
 
-filename export "F:\Ã×Á£Demographics\csv\distance.csv" encoding='utf-8';
+filename export "F:\ç±³ç²’Demographics\csv\distance.csv" encoding='utf-8';
 PROC EXPORT DATA= submart.every_distance
 			 outfile = export
 			 dbms = csv replace;
