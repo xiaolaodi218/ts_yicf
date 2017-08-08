@@ -1,7 +1,7 @@
-option compress = yes validvarname = any;
+ï»¿option compress = yes validvarname = any;
 libname submart "D:\mili\Datamart\data";
 
-***µçÉÌÊı¾İ**ÊÕ»õµØÖ·;
+***ç”µå•†æ•°æ®**æ”¶è´§åœ°å€;
 proc sort data=submart.apply_flag nodupkey;by apply_code;run;
 proc sort data=submart.ml_Demograph nodupkey;by apply_code;run;
 
@@ -13,33 +13,33 @@ run;
 proc sort data = ds_data_jbgz; by apply_code; run;
 
 data ds_data;
-set ds_data_jbgz(keep = apply_code rule_name_normal memo id main_info_id rule_name ¹æÔòÃüÖĞÔÂ·İ ¹æÔòÃüÖĞÈÕÆÚ);
-if rule_name_normal="JBAA018_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ100M" or 
-rule_name_normal="JBAA019_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ100M" or 
-rule_name_normal="JBAA022_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA023_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ300M" or 
-rule_name_normal="JBAA024_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ400M" or 
-rule_name_normal="JBAA026_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA027_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ300M" or 
-rule_name_normal="JBAA028_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ400M" or 
-rule_name_normal="JBAA029_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ500M" or
-rule_name_normal="JBAA030_µ¥Î»ÓëÊÕ»õµØ¾àÀë´óÓÚ500M" or 
-rule_name_normal="JBAA031_×¡Ö·ÓëÊÕ»õµØ¾àÀë´óÓÚ500M" or 
-rule_name_normal="JBAA032_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ500M" or 
-rule_name_normal="JBAA033_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ500M" or 
-rule_name_normal="JBAA034_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ400M" or
-rule_name_normal="JBAA035_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ300M" or
-rule_name_normal="JBAA036_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA037_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ100M" or
-rule_name_normal="JBAA038_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ400M" or
-rule_name_normal="JBAA039_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ300M" or
-rule_name_normal="JBAA040_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA041_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ100M" or
-rule_name_normal="JBAA042_×¡Ö·ÓëGPS¾àÀë´óÓÚ500M" or
-rule_name_normal="JBAA043_µ¥Î»ÓëGPS¾àÀë´óÓÚ500M";
+set ds_data_jbgz(keep = apply_code rule_name_normal memo id main_info_id rule_name è§„åˆ™å‘½ä¸­æœˆä»½ è§„åˆ™å‘½ä¸­æ—¥æœŸ);
+if rule_name_normal="JBAA018_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº100M" or 
+rule_name_normal="JBAA019_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº100M" or 
+rule_name_normal="JBAA022_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº200M" or
+rule_name_normal="JBAA023_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº300M" or 
+rule_name_normal="JBAA024_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº400M" or 
+rule_name_normal="JBAA026_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº200M" or
+rule_name_normal="JBAA027_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº300M" or 
+rule_name_normal="JBAA028_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº400M" or 
+rule_name_normal="JBAA029_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº500M" or
+rule_name_normal="JBAA030_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å¤§äº500M" or 
+rule_name_normal="JBAA031_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å¤§äº500M" or 
+rule_name_normal="JBAA032_ä½å€ä¸GPSè·ç¦»å°äº500M" or 
+rule_name_normal="JBAA033_å•ä½ä¸GPSè·ç¦»å°äº500M" or 
+rule_name_normal="JBAA034_å•ä½ä¸GPSè·ç¦»å°äº400M" or
+rule_name_normal="JBAA035_å•ä½ä¸GPSè·ç¦»å°äº300M" or
+rule_name_normal="JBAA036_å•ä½ä¸GPSè·ç¦»å°äº200M" or
+rule_name_normal="JBAA037_å•ä½ä¸GPSè·ç¦»å°äº100M" or
+rule_name_normal="JBAA038_ä½å€ä¸GPSè·ç¦»å°äº400M" or
+rule_name_normal="JBAA039_ä½å€ä¸GPSè·ç¦»å°äº300M" or
+rule_name_normal="JBAA040_ä½å€ä¸GPSè·ç¦»å°äº200M" or
+rule_name_normal="JBAA041_ä½å€ä¸GPSè·ç¦»å°äº100M" or
+rule_name_normal="JBAA042_ä½å€ä¸GPSè·ç¦»å¤§äº500M" or
+rule_name_normal="JBAA043_å•ä½ä¸GPSè·ç¦»å¤§äº500M";
 run;
 
-**²ğ·Ömemo;
+**æ‹†åˆ†memo;
 data t;set ds_data;
 max=length(compress(memo,'#','k'))+1;
 run;
@@ -51,13 +51,13 @@ memo1=scan(memo,idd,'#');output;
 end;
 run;
 
-**½ØÈ¡µô¾àÀë:;
+**æˆªå–æ‰è·ç¦»:;
 data rr; 
 set b;
-memo2=tranwrd(memo1,'¾àÀë£º','');
+memo2=tranwrd(memo1,'è·ç¦»ï¼š','');
 run;
 
-**Ç¿ÖÆÀàĞÍ×ª»»;
+**å¼ºåˆ¶ç±»å‹è½¬æ¢;
 data ss;
 set rr;
 format memo3 best12.;
@@ -65,66 +65,66 @@ memo3=strip(memo2);
 run;
 
 proc sql;
-create table ds_goods as select apply_code,rule_name_normal,id ,main_info_id ,rule_name,¹æÔòÃüÖĞÔÂ·İ, ¹æÔòÃüÖĞÈÕÆÚ,memo,min(memo3) as min_memo from 
-ss group by apply_code,rule_name_normal,id ,main_info_id ,rule_name,¹æÔòÃüÖĞÔÂ·İ, ¹æÔòÃüÖĞÈÕÆÚ,memo;
+create table ds_goods as select apply_code,rule_name_normal,id ,main_info_id ,rule_name,è§„åˆ™å‘½ä¸­æœˆä»½, è§„åˆ™å‘½ä¸­æ—¥æœŸ,memo,min(memo3) as min_memo from 
+ss group by apply_code,rule_name_normal,id ,main_info_id ,rule_name,è§„åˆ™å‘½ä¸­æœˆä»½, è§„åˆ™å‘½ä¸­æ—¥æœŸ,memo;
 quit;
 
-**×¡Ö·ÓëÊÕ»õµØÖ·Ö®¼ä¾àÀë;
+**ä½å€ä¸æ”¶è´§åœ°å€ä¹‹é—´è·ç¦»;
 data address_goods;
 set ds_goods;
-if rule_name_normal="JBAA018_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ100M" or 
-rule_name_normal="JBAA022_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA023_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ300M" or 
-rule_name_normal="JBAA024_×¡Ö·ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ400M" or 
-rule_name_normal="JBAA031_×¡Ö·ÓëÊÕ»õµØ¾àÀë´óÓÚ500M";
-rule_name_normal = "×¡Ö·ÓëÊÕ»õµØ¾àÀë";
+if rule_name_normal="JBAA018_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº100M" or 
+rule_name_normal="JBAA022_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº200M" or
+rule_name_normal="JBAA023_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº300M" or 
+rule_name_normal="JBAA024_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å°äº400M" or 
+rule_name_normal="JBAA031_ä½å€ä¸æ”¶è´§åœ°è·ç¦»å¤§äº500M";
+rule_name_normal = "ä½å€ä¸æ”¶è´§åœ°è·ç¦»";
 drop rule_name memo;
 min_memo =min_memo *0.001;
-rename min_memo=×¡Ö·ÓëÊÕ»õµØ¾àÀë;
+rename min_memo=ä½å€ä¸æ”¶è´§åœ°è·ç¦»;
 run;
 
-**µ¥Î»ÓëÊÕ»õµØÖ·Ö®¼äµÄ¾àÀë;
+**å•ä½ä¸æ”¶è´§åœ°å€ä¹‹é—´çš„è·ç¦»;
 data company_goods;
 set ds_goods;
-if rule_name_normal="JBAA019_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ100M" or 
-rule_name_normal="JBAA026_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA027_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ300M" or 
-rule_name_normal="JBAA028_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ400M" or 
-rule_name_normal="JBAA029_µ¥Î»ÓëÊÕ»õµØ¾àÀëĞ¡ÓÚ500M" or
-rule_name_normal="JBAA030_µ¥Î»ÓëÊÕ»õµØ¾àÀë´óÓÚ500M";
-rule_name_normal = "µ¥Î»ÓëÊÕ»õµØ¾àÀë";
+if rule_name_normal="JBAA019_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº100M" or 
+rule_name_normal="JBAA026_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº200M" or
+rule_name_normal="JBAA027_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº300M" or 
+rule_name_normal="JBAA028_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº400M" or 
+rule_name_normal="JBAA029_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å°äº500M" or
+rule_name_normal="JBAA030_å•ä½ä¸æ”¶è´§åœ°è·ç¦»å¤§äº500M";
+rule_name_normal = "å•ä½ä¸æ”¶è´§åœ°è·ç¦»";
 min_memo =min_memo *0.001;
-rename min_memo=µ¥Î»ÓëÊÕ»õµØ¾àÀë;
+rename min_memo=å•ä½ä¸æ”¶è´§åœ°è·ç¦»;
 drop rule_name memo;
 run;
 
-**×¡Ö·ÓëGPSÖ®¼äµÄ¾àÀë;
+**ä½å€ä¸GPSä¹‹é—´çš„è·ç¦»;
 data address_gps;
 set ds_goods;
-if rule_name_normal="JBAA038_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ400M" or
-rule_name_normal="JBAA039_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ300M" or
-rule_name_normal="JBAA040_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA041_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ100M" or
-rule_name_normal="JBAA042_×¡Ö·ÓëGPS¾àÀë´óÓÚ500M" or
-rule_name_normal="JBAA032_×¡Ö·ÓëGPS¾àÀëĞ¡ÓÚ500M";
-rule_name_normal = "×¡Ö·ÓëGPS¾àÀë";
+if rule_name_normal="JBAA038_ä½å€ä¸GPSè·ç¦»å°äº400M" or
+rule_name_normal="JBAA039_ä½å€ä¸GPSè·ç¦»å°äº300M" or
+rule_name_normal="JBAA040_ä½å€ä¸GPSè·ç¦»å°äº200M" or
+rule_name_normal="JBAA041_ä½å€ä¸GPSè·ç¦»å°äº100M" or
+rule_name_normal="JBAA042_ä½å€ä¸GPSè·ç¦»å¤§äº500M" or
+rule_name_normal="JBAA032_ä½å€ä¸GPSè·ç¦»å°äº500M";
+rule_name_normal = "ä½å€ä¸GPSè·ç¦»";
 min_memo =min_memo *0.001;
-rename min_memo=×¡Ö·ÓëGPS¾àÀë;
+rename min_memo=ä½å€ä¸GPSè·ç¦»;
 drop rule_name memo;
 run;
 
-**µ¥Î»ÓëGPSÖ®¼äµÄ¾àÀë;
+**å•ä½ä¸GPSä¹‹é—´çš„è·ç¦»;
 data company_gps;
 set ds_goods;
-if rule_name_normal="JBAA033_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ500M" or 
-rule_name_normal="JBAA034_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ400M" or
-rule_name_normal="JBAA035_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ300M" or
-rule_name_normal="JBAA036_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ200M" or
-rule_name_normal="JBAA037_µ¥Î»ÓëGPS¾àÀëĞ¡ÓÚ100M" or
-rule_name_normal="JBAA043_µ¥Î»ÓëGPS¾àÀë´óÓÚ500M";
-rule_name_normal = "µ¥Î»ÓëGPS¾àÀë";
+if rule_name_normal="JBAA033_å•ä½ä¸GPSè·ç¦»å°äº500M" or 
+rule_name_normal="JBAA034_å•ä½ä¸GPSè·ç¦»å°äº400M" or
+rule_name_normal="JBAA035_å•ä½ä¸GPSè·ç¦»å°äº300M" or
+rule_name_normal="JBAA036_å•ä½ä¸GPSè·ç¦»å°äº200M" or
+rule_name_normal="JBAA037_å•ä½ä¸GPSè·ç¦»å°äº100M" or
+rule_name_normal="JBAA043_å•ä½ä¸GPSè·ç¦»å¤§äº500M";
+rule_name_normal = "å•ä½ä¸GPSè·ç¦»";
 min_memo =min_memo *0.001;
-rename min_memo=µ¥Î»ÓëGPS¾àÀë;
+rename min_memo=å•ä½ä¸GPSè·ç¦»;
 drop rule_name memo;
 run;
 
