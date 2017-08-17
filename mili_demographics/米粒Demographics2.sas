@@ -75,16 +75,32 @@ run;
 *13;
 data bjb.risk_creditx_resp;
 set dwdata.risk_creditx_resp;
+run;
 *14;
 *氪信数据;
 data bjb.Cxfeature;
 set submart.Cxfeature_na;
+run;
 *15;
-*白骑士数据;
+*贷款事件数据;
 data bjb.loanevent_in;
 set submart.loanevent_in;
 run;
 *16;
+*决策事件数据;
+data bjb.decisionevent_in;
+set submart.decisionevent_in;
+run;
+*17;
+*复贷事件数据;
+data bjb.Reloanevent_in;
+set submart.Reloanevent_in;
+run;
+**贷款，决策，复贷事件;
+data bjb.event_all;
+set submart.event_all;
+run;
+*18;
 *使用AB标签;
 data bjb.apply_flag;
 set submart.apply_flag(keep = apply_code loc_abmoduleflag);
@@ -232,7 +248,7 @@ b.MONTH_SALARY_NAME,c.审核处理月份,c.审核处理日期,c.refuse_name from bjb.apply_s
 left join bjb.Baseinfo_submart as b on a.user_code=b.user_code
 left join bjb.approval_submart as c on a.apply_code=c.apply_code;
 quit;
-proc sort data=bjb.loanevent_in nodupkey;by apply_code;run;
+
 proc sql;
 create table ttd_use1 as
 select a.*,b.loc_addresscnt,b.loc_appsl,b.loc_ava_exp,b.loc_callcount,b.loc_zmscore,b.loc_calledcount,
@@ -241,8 +257,9 @@ b.loc_inpast3rd_calledtime,b.loc_inpast3rd_calltime,b.loc_phonenum,b.loc_registe
 b.loc_tel_jm_rank,b.loc_tel_po_rank,b.loc_tel_py_rank,b.loc_tel_qs_rank,b.loc_tel_qt_rank,b.loc_tel_ts_rank,
 b.loc_tel_tx_rank,b.loc_tel_xd_rank,b.loc_tel_zn_rank,b.loc_txlsl,b.loc_3mcnt_silent,b.loc_3mmaxcnt_silent,
 b.loc_1mcnt_silent,b.loc_1mmaxcnt_silent,b.loc_tqscore,b.ja_distance,b.ag_distance,b.jg_distance,b.住址与收货地距离,
-b.单位与收货地距离 from ttd_use as a left join bjb.loanevent_in as  b on a.apply_code=b.apply_code;
+b.单位与收货地距离 from ttd_use as a left join bjb.event_all as b on a.apply_code=b.apply_code;
 quit;
+
 proc sort data=ttd_use1 nodupkey;by apply_code;run;
 
 **Tdrule;
@@ -455,7 +472,7 @@ proc sort data=ttd_use7 nodupkey;by apply_code;run;
 %end;
 %mend;
 %Average_TAT();
- 
+
 data bjb.ml_Demograph;
 set ttd_use7(drop=一月多台 三月多台 七天多台);
 input_complete=1;

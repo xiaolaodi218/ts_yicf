@@ -13,6 +13,52 @@ out=submart.bqsreq dbms=excel replace;
 getnames=yes;
 run;
 
+data bqsreq ;
+set submart.bqsreq;
+format loc_ava_exp1 BEST12.;
+format loc_tel_fm_rank1 BEST12.;
+format loc_tel_po_rank1 BEST12.;
+format loc_tel_py_rank1 BEST12.;
+format loc_tel_qs_rank1 BEST12.;
+format loc_tel_ts_rank1 BEST12.;
+
+loc_ava_exp1 = loc_ava_exp;
+loc_tel_fm_rank1 = loc_tel_fm_rank;
+loc_tel_po_rank1 = loc_tel_po_rank;
+loc_tel_py_rank1 = loc_tel_py_rank;
+loc_tel_qs_rank1 = loc_tel_qs_rank;
+loc_tel_ts_rank1 = loc_tel_ts_rank;
+run;
+
+data loanevent;
+set bqsreq(drop=loc_ava_exp loc_tel_fm_rank loc_tel_po_rank loc_tel_py_rank loc_tel_qs_rank loc_tel_ts_rank
+loc_addresscnt
+loc_ava_limit 
+loc_callcount 
+loc_calledcount 
+loc_inpast1st_calledtime 
+loc_inpast1st_calltime 
+loc_inpast2nd_calledtime 
+loc_inpast2nd_calltime 
+loc_inpast3rd_calledtime 
+loc_inpast3rd_calltime 
+loc_limit 
+loc_phonenum 
+loc_unusnalflag 
+loc_CreditxScore 
+);
+rename loc_ava_exp1 = loc_ava_exp
+loc_tel_fm_rank1 = loc_tel_fm_rank
+loc_tel_po_rank1 = loc_tel_po_rank
+loc_tel_py_rank1 = loc_tel_py_rank
+loc_tel_qs_rank1 = loc_tel_qs_rank
+loc_tel_ts_rank1 = loc_tel_ts_rank;
+run;
+
+/*data submart.bqsreq ;*/
+/*set submart.bqsreq(drop=loc_ava_exp loc_tel_fm_rank loc_tel_po_rank loc_tel_py_rank loc_tel_qs_rank loc_tel_ts_rank);*/
+/*run;*/
+
 **Cxfeature_na;
 proc import datafile="D:\mili\Datamart\pyscript\submart\cxreq.xlsx"
 out=submart.Cxfeature_na dbms=excel replace;
@@ -25,40 +71,47 @@ out=submart.tqreq_score dbms=excel replace;
 getnames=yes;
 run;
 
-***贷款事件;
-data loanevent;
+**reloan;
+proc import datafile="D:\mili\Datamart\pyscript\submart\req_bqs_reloan.xlsx"
+out=submart.req_bqs_reloan dbms=excel replace;
+getnames=yes;
+run;
+
+*************贷款事件*******************************************;
+data loanBQS;
 set submart.loanBQS_loan_submart(keep = apply_code main_info_id execut日期 execut月份 os_type execut状态);
 run;
 data main_log_id;
 set dpraw.bqs_main_info(keep = id data_query_log_id);
 rename id = main_info_id;
 run;
-proc sort data = loanevent nodupkey; by main_info_id; run;
+proc sort data = loanBQS nodupkey; by main_info_id; run;
 proc sort data = main_log_id nodupkey; by main_info_id;run;
-data loanevent;
-merge loanevent(in = a) main_log_id(in = b);
+data loan_bqs;
+merge loanBQS(in = a) main_log_id(in = b);
 by main_info_id;
 if a;
 run;
 
 ***贷款事件策略入参;
 data loanevent_in;
-set submart.bqsreq;
+set loanevent;
 rename id = data_query_log_id;
 run;
 
-proc sort data = loanevent nodupkey; by data_query_log_id; run;
+proc sort data = loan_bqs nodupkey; by data_query_log_id; run;
 proc sort data = loanevent_in nodupkey; by data_query_log_id; run;
 
 data submart.loanevent_in;
-merge loanevent(in = a) loanevent_in(in = b); 
+merge loan_bqs(in = a) loanevent_in(in = b); 
 by data_query_log_id;
 if a;
 run;
 
 **拼接距离数据;
 proc sort data = submart.loanevent_in nodupkey; by apply_code; run;
-proc sort data = submart.every_distance(drop = gps_address job_company_address residence_address) nodupkey; by apply_code; run;
+proc sort data = submart.every_distance nodupkey; by apply_code; run;
+/*proc sort data = submart.every_distance(drop = gps_address job_company_address residence_address) nodupkey; by apply_code; run;*/
 
 data submart.loanevent_in;
 merge submart.loanevent_in(in = a) submart.every_distance(in = b); 
@@ -66,7 +119,39 @@ by apply_code;
 if a;
 run;
 
-**决策事件;
+
+**************复贷事件***********************************************;
+data reloanevent;
+set submart.Reloanbqs_loan_submart(keep = apply_code main_info_id execut日期 execut月份 os_type execut状态);
+run;
+data main_log_id;
+set dpraw.bqs_main_info(keep = id data_query_log_id);
+rename id = main_info_id;
+run;
+proc sort data = reloanevent nodupkey; by main_info_id; run;
+proc sort data = main_log_id nodupkey; by main_info_id;run;
+data reloanevent;
+merge reloanevent(in = a) main_log_id(in = b);
+by main_info_id;
+if a;
+run;
+
+data req_bqs_reloan;
+set submart.req_bqs_reloan;
+rename id = data_query_log_id;
+run;
+
+proc sort data = reloanevent nodupkey; by data_query_log_id; run;
+proc sort data = req_bqs_reloan nodupkey; by data_query_log_id; run;
+
+data submart.reloanevent_in;
+merge reloanevent(in = a) req_bqs_reloan(in = b); 
+by data_query_log_id;
+if a;
+run;
+
+
+***决策事件策略入参**************************************************;
 data decisionevent;
 set submart.Loanbqs_decision_submart(keep = apply_code main_info_id execut日期 execut月份 os_type execut状态);
 run;
@@ -81,8 +166,6 @@ merge decisionevent(in = a) main_log_id(in = b);
 by main_info_id;
 if a;
 run;
-
-***决策事件策略入参;
 
 **天启分;
 
@@ -105,13 +188,23 @@ run;
 proc sort data = submart.loanevent_in nodupkey; by apply_code;run;
 proc sort data = submart.decisionevent_in nodupkey; by apply_code;run;
 
-data submart.loanevent_in;
+
+data submart.loanevent_de;
 merge submart.loanevent_in(in = a) submart.decisionevent_in(in =b);
 by apply_code;
 if a;
 run;
 
+***拼接贷款事件和复贷事件;
+proc sort data = submart.loanevent_de nodupkey; by apply_code;run;
+proc sort data = submart.reloanevent_in nodupkey; by apply_code;run;
+
+data submart.event_all;
+set submart.loanevent_de submart.reloanevent_in;
+run;
+
 ********************************************************;
+**哈希函数,拼接大数据集;
 
 %macro InitVariableInDataset(dataset,withoutvar, withoutvar2='');
 
@@ -166,7 +259,7 @@ data loc_register_date;
 	if share.find() = 0;
 run;
 
-data loanevent_in;
+data event_all;
 	if _n_ = 0 then set loc_register_date;
 	if _n_ = 1 then do;
 		declare hash share(dataset:'loc_register_date');
@@ -175,13 +268,13 @@ data loanevent_in;
 					share.definedone();
 	call missing (of _all_);
 	end;
-	set submart.loanevent_in;
+	set submart.event_all;
 	if share.find() = 0 then do; end;
 	else do; %InitVariableInDataset(loc_register_date,apply_code); end;
 run;
 
-data submart.loanevent_in;
-set loanevent_in;
+data submart.event_all;
+set event_all;
 if loc_register_date = "" then loc_register_date = register_date;
 drop user_code register_date;
 run;
