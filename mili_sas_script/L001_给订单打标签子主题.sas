@@ -23,7 +23,7 @@ run;
 proc sort data = silver_apply nodupkey; by apply_code; run;
 
 /*冠军挑战者标签*/
-proc import out = abmoduleflag datafile = "F:\TQ\tq_change\abmoduleflag_req.csv" dbms = csv replace; 
+proc import out = abmoduleflag datafile = "D:\mili\Datamart\rawdata_csv_py\abmoduleflag\abmoduleflag_req.csv" dbms = csv replace; 
 	getnames = yes; 
 run;
 data abmoduleflag;
@@ -73,7 +73,7 @@ run;
 /*给apply_submart加标签*/
 proc sort data = submart.apply_submart out = apply_submart nodupkey; by apply_code;run;
 data submart.apply_submart;
-merge apply_submart(in = a) apply_flag(in = b);
+merge apply_submart(in = a) submart.apply_flag(in = b);
 by apply_code;
 if a;
 run;
@@ -81,7 +81,7 @@ run;
 ***给approval_submart加标签;
 proc sort data = submart.approval_submart out = approval_submart; by apply_code; run;
 data submart.approval_submart;
-merge approval_submart(in = a) apply_flag(in = b);
+merge approval_submart(in = a) submart.apply_flag(in = b);
 by apply_code;
 if a;
 format 金策略审批结果 $20.;
@@ -312,6 +312,38 @@ by apply_code;
 if a;
 run;
 
+***给BQSrule_jbgz_b_submart加标签;
+proc sort data = submart.BQSrule_jbgz_b_submart out = BQSrule_jbgz_b_submart; by apply_code; run;
+data submart.BQSrule_jbgz_b_submart;
+merge BQSrule_jbgz_b_submart(in = a) apply_flag(in = b);
+by apply_code;
+if a;
+run;
+
+***给BQSrule_jbgz_base_submart加标签;
+proc sort data = submart.BQSrule_jbgz_base_submart out = BQSrule_jbgz_base_submart; by apply_code; run;
+data submart.BQSrule_jbgz_base_submart;
+merge BQSrule_jbgz_base_submart(in = a) apply_flag(in = b);
+by apply_code;
+if a;
+run;
+
+***给BQSrule_jbgz_aaa_submart加标签;
+proc sort data = submart.BQSrule_jbgz_aaa_submart out = BQSrule_jbgz_aaa_submart; by apply_code; run;
+data submart.BQSrule_jbgz_b_submart;
+merge BQSrule_jbgz_aaa_submart(in = a) apply_flag(in = b);
+by apply_code;
+if a;
+run;
+
+***给BQSrule_jbgz_bbb_submart加标签;
+proc sort data = submart.BQSrule_jbgz_bbb_submart out = BQSrule_jbgz_bbb_submart; by apply_code; run;
+data submart.BQSrule_jbgz_bbb_submart;
+merge BQSrule_jbgz_bbb_submart(in = a) apply_flag(in = b);
+by apply_code;
+if a;
+run;
+
 ***给BQSrule_fsyys_submart加标签;
 proc sort data = submart.BQSrule_fsyys_submart out = BQSrule_fsyys_submart; by apply_code; run;
 data submart.BQSrule_fsyys_submart;
@@ -324,6 +356,38 @@ run;
 proc sort data = submart.BQSrule_fsyys_b_submart out = BQSrule_fsyys_b_submart; by apply_code; run;
 data submart.BQSrule_fsyys_b_submart;
 merge BQSrule_fsyys_b_submart(in = a) apply_flag(in = b);
+by apply_code;
+if a;
+run;
+
+***给bqsrule_fsyys_base_submart加标签;
+proc sort data = submart.BQSrule_fsyys_base_submart out = BQSrule_fsyys_base_submart; by apply_code; run;
+data submart.BQSrule_fsyys_base_submart;
+merge BQSrule_fsyys_base_submart(in = a) apply_flag(in = b);
+by apply_code;
+if a;
+run;
+
+***给bqsrule_fsyys_aaa_submart加标签;
+proc sort data = submart.BQSrule_fsyys_aaa_submart out = BQSrule_fsyys_aaa_submart; by apply_code; run;
+data submart.BQSrule_fsyys_aaa_submart;
+merge BQSrule_fsyys_aaa_submart(in = a) apply_flag(in = b);
+by apply_code;
+if a;
+run;
+
+***给bqsrule_fsyys_bbb_submart加标签;
+proc sort data = submart.BQSrule_fsyys_bbb_submart out = BQSrule_fsyys_bbb_submart; by apply_code; run;
+data submart.BQSrule_fsyys_bbb_submart;
+merge BQSrule_fsyys_bbb_submart(in = a) apply_flag(in = b);
+by apply_code;
+if a;
+run;
+
+***给bqsrule_fsyys_ccc_submart加标签;
+proc sort data = submart.BQSrule_fsyys_ccc_submart out = BQSrule_fsyys_ccc_submart; by apply_code; run;
+data submart.BQSrule_fsyys_ccc_submart;
+merge BQSrule_fsyys_ccc_submart(in = a) apply_flag(in = b);
 by apply_code;
 if a;
 run;
