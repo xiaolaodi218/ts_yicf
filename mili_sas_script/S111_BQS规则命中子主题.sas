@@ -173,11 +173,13 @@ run;
 %hit_rule(mddh,"通过策略");
 
 %hit_rule(fsyys_B,"FSYYS策略_挑战者");
+%hit_rule(fsyys_BASE,"FSYYS策略_BASE");
 %hit_rule(fsyys_AAA,"FSYYS策略_AAA");
 %hit_rule(fsyys_BBB,"FSYYS策略_BBB");
 %hit_rule(fsyys_CCC,"FSYYS策略_CCC");
 
 %hit_rule(jbgz_B,"基本规则策略_挑战者");
+%hit_rule(jbgz_BASE,"基本规则策略_BASE");
 %hit_rule(jbgz_AAA,"基本规则策略_AAA");
 %hit_rule(jbgz_BBB,"基本规则策略_BBB");
 
