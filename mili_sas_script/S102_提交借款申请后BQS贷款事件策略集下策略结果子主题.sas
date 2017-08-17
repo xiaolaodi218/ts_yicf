@@ -31,7 +31,8 @@ quit;
 
 ***基本规则策略;
 data jbgz_strategy;
-set dpRaw.bqs_strategy_result(where = (strategy_name = "基本规则策略"));
+set dpRaw.bqs_strategy_result(where = (strategy_name="基本规则策略" or strategy_name="基本规则策略_挑战者" or 
+strategy_name="基本规则策略_BASE" or strategy_name="基本规则策略_AAA" or strategy_name="基本规则策略_BBB"));
 rename id = strategy_result_id;
 /*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
 run;
@@ -42,26 +43,73 @@ proc sql;
 create table jbgz as
 select a.apply_code, a.execut状态, a.execut日期, a.execut月份, a.os_type, a.main_info_id, b.strategy_result_id, b.strategy_decision as 基本规则策略结果
 from loanSet_result as a left join 
-jbgz_strategy as b on a.main_info_id = b.main_info_id
-;
+jbgz_strategy as b on a.main_info_id = b.main_info_id;
 quit;
 
 ***基本规则策略_挑战者;
-data jbgz_strategy;
+data jbgz_strategy_b;
 set dpRaw.bqs_strategy_result(where = (strategy_name = "基本规则策略_挑战者"));
 rename id = strategy_result_id;
 /*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
 run;
-proc sort data = jbgz_strategy nodupkey; by main_info_id descending strategy_result_id; run;
-proc sort data = jbgz_strategy nodupkey; by main_info_id; run;
+proc sort data = jbgz_strategy_b nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = jbgz_strategy_b nodupkey; by main_info_id; run;
 
 proc sql;
 create table jbgz_B as
 select a.apply_code, a.execut状态, a.execut日期, a.execut月份, a.os_type, a.main_info_id, b.strategy_result_id, b.strategy_decision as 基本规则策略_挑战者结果
 from loanSet_result as a left join 
-jbgz_strategy as b on a.main_info_id = b.main_info_id
-;
+jbgz_strategy_b as b on a.main_info_id = b.main_info_id;
 quit;
+
+
+***基本规则BASE;
+data jbgz_strategy_base;
+set dpRaw.bqs_strategy_result(where = (strategy_name = "基本规则策略_BASE"));
+rename id = strategy_result_id;
+/*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
+run;
+proc sort data = jbgz_strategy_base nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = jbgz_strategy_base nodupkey; by main_info_id; run;
+
+proc sql;
+create table jbgz_base as
+select a.apply_code, a.execut状态, a.execut日期, a.execut月份, a.os_type, a.main_info_id, b.strategy_result_id, b.strategy_decision as 基本规则策略_BASE结果
+from loanSet_result as a left join 
+jbgz_strategy_base as b on a.main_info_id = b.main_info_id;
+quit;
+
+***基本规则策略_AAA;
+data jbgz_strategy_AAA;
+set dpRaw.bqs_strategy_result(where = (strategy_name = "基本规则策略_AAA"));
+rename id = strategy_result_id;
+/*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
+run;
+proc sort data = jbgz_strategy_AAA nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = jbgz_strategy_AAA nodupkey; by main_info_id; run;
+
+proc sql;
+create table jbgz_AAA as
+select a.apply_code, a.execut状态, a.execut日期, a.execut月份, a.os_type, a.main_info_id, b.strategy_result_id, b.strategy_decision as 基本规则策略_AAA结果
+from loanSet_result as a left join 
+jbgz_strategy_AAA as b on a.main_info_id = b.main_info_id;
+quit;
+***基本规则策略_BBB;
+data jbgz_strategy_BBB;
+set dpRaw.bqs_strategy_result(where = (strategy_name = "基本规则策略_BBB"));
+rename id = strategy_result_id;
+/*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
+run;
+proc sort data = jbgz_strategy_BBB nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = jbgz_strategy_BBB nodupkey; by main_info_id; run;
+
+proc sql;
+create table jbgz_BBB as
+select a.apply_code, a.execut状态, a.execut日期, a.execut月份, a.os_type, a.main_info_id, b.strategy_result_id, b.strategy_decision as 基本规则策略_BBB结果
+from loanSet_result as a left join 
+jbgz_strategy_BBB as b on a.main_info_id = b.main_info_id;
+quit;
+
 
 ***JXL策略;
 data jxl_strategy;
@@ -133,7 +181,8 @@ quit;
 
 ***FSYYS策略;
 data fsyys_strategy;
-set dpRaw.bqs_strategy_result(where = (strategy_name = "FSYYS策略"));
+set dpRaw.bqs_strategy_result(where = (strategy_name = "FSYYS策略" or strategy_name = "FSYYS策略_挑战者" or strategy_name = "FSYYS策略_AAA" 
+or strategy_name = "FSYYS策略_BBB" or strategy_name = "FSYYS策略_CCC"));
 rename id = strategy_result_id;
 /*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
 run;
@@ -149,19 +198,87 @@ fsyys_strategy as b on a.main_info_id = b.main_info_id
 quit;
 
 ***FSYYS策略_挑战者;
-data fsyys_strategy;
+data fsyys_strategy_B;
 set dpRaw.bqs_strategy_result(where = (strategy_name = "FSYYS策略_挑战者"));
 rename id = strategy_result_id;
 /*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
 run;
-proc sort data = fsyys_strategy nodupkey; by main_info_id descending strategy_result_id; run;
-proc sort data = fsyys_strategy nodupkey; by main_info_id; run;
+proc sort data = fsyys_strategy_B nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = fsyys_strategy_B nodupkey; by main_info_id; run;
 
 proc sql;
 create table fsyys_B as
 select a.main_info_id, b.strategy_result_id, b.strategy_decision as FSYYS策略_挑战者结果
 from loanSet_result as a left join 
-fsyys_strategy as b on a.main_info_id = b.main_info_id
+fsyys_strategy_B as b on a.main_info_id = b.main_info_id
+;
+quit;
+
+***FSYYS策略_BASE;
+data fsyys_strategy_BASE;
+set dpRaw.bqs_strategy_result(where = (strategy_name = "FSYYS策略_BASE"));
+rename id = strategy_result_id;
+/*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
+run;
+proc sort data = fsyys_strategy_BASE nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = fsyys_strategy_BASE nodupkey; by main_info_id; run;
+
+proc sql;
+create table fsyys_BASE as
+select a.main_info_id, b.strategy_result_id, b.strategy_decision as FSYYS策略_BASE结果
+from loanSet_result as a left join 
+fsyys_strategy_BASE as b on a.main_info_id = b.main_info_id
+;
+quit;
+
+***FSYYS策略_AAA;
+data fsyys_strategy_AAA;
+set dpRaw.bqs_strategy_result(where = (strategy_name = "FSYYS策略_AAA"));
+rename id = strategy_result_id;
+/*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
+run;
+proc sort data = fsyys_strategy_AAA nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = fsyys_strategy_AAA nodupkey; by main_info_id; run;
+
+proc sql;
+create table fsyys_AAA as
+select a.main_info_id, b.strategy_result_id, b.strategy_decision as FSYYS策略_AAA结果
+from loanSet_result as a left join 
+fsyys_strategy_AAA as b on a.main_info_id = b.main_info_id
+;
+quit;
+
+***FSYYS策略_BBB;
+data fsyys_strategy_BBB;
+set dpRaw.bqs_strategy_result(where = (strategy_name = "FSYYS策略_BBB"));
+rename id = strategy_result_id;
+/*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
+run;
+proc sort data = fsyys_strategy_BBB nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = fsyys_strategy_BBB nodupkey; by main_info_id; run;
+
+proc sql;
+create table fsyys_BBB as
+select a.main_info_id, b.strategy_result_id, b.strategy_decision as FSYYS策略_BBB结果
+from loanSet_result as a left join 
+fsyys_strategy_BBB as b on a.main_info_id = b.main_info_id
+;
+quit;
+
+***FSYYS策略_CCC;
+data fsyys_strategy_CCC;
+set dpRaw.bqs_strategy_result(where = (strategy_name = "FSYYS策略_CCC"));
+rename id = strategy_result_id;
+/*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
+run;
+proc sort data = fsyys_strategy_CCC nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = fsyys_strategy_CCC nodupkey; by main_info_id; run;
+
+proc sql;
+create table fsyys_CCC as
+select a.main_info_id, b.strategy_result_id, b.strategy_decision as FSYYS策略_CCC结果
+from loanSet_result as a left join 
+fsyys_strategy_CCC as b on a.main_info_id = b.main_info_id
 ;
 quit;
 
@@ -201,26 +318,44 @@ quit;
 
 proc sort data = jbgz nodupkey; by main_info_id; run;
 proc sort data = jbgz_B nodupkey; by main_info_id; run;
+proc sort data = jbgz_AAA nodupkey; by main_info_id; run;
+proc sort data = jbgz_BBB nodupkey; by main_info_id; run;
 proc sort data = jxl nodupkey; by main_info_id; run;
 proc sort data = llkz nodupkey; by main_info_id; run;
 proc sort data = eysq nodupkey; by main_info_id; run;
 proc sort data = ycsq nodupkey; by main_info_id; run;
 proc sort data = fsyys nodupkey; by main_info_id; run;
 proc sort data = fsyys_B nodupkey; by main_info_id; run;
+proc sort data = fsyys_AAA nodupkey; by main_info_id; run;
+proc sort data = fsyys_BBB nodupkey; by main_info_id; run;
+proc sort data = fsyys_CCC nodupkey; by main_info_id; run;
+
 proc sort data = fsds nodupkey; by main_info_id; run;
 proc sort data = glgz nodupkey; by main_info_id; run;
 
 data submart.loanBQS_loan_submart;
-merge jbgz(in = a) jxl(in = b) llkz(in = c) eysq(in = d) ycsq(in = e) fsyys(in = f) fsds(in = g) glgz(in = h) fsyys_B(in = i) jbgz_B(in = j);
+merge jbgz(in = a) jxl(in = b) llkz(in = c) eysq(in = d) ycsq(in = e) fsyys(in = f) fsds(in = g) glgz(in = h) fsyys_B(in = i) jbgz_B(in = j) 
+jbgz_BASE(in = k) jbgz_AAA(in = l) jbgz_BBB(in = m) fsyys_BASE(in= n) fsyys_AAA(in = o) fsyys_BBB(in = p) fsyys_CCC(in = q);
 by main_info_id;
 if a;
 if execut状态 = "FINISHED" and 基本规则策略结果 = "" then 基本规则策略结果 = "Accept";
+if execut状态 = "FINISHED" and 基本规则策略_挑战者结果 = "" then 基本规则策略_挑战者结果 = "Accept";
+if execut状态 = "FINISHED" and 基本规则策略_BASE结果 = "" then 基本规则策略_BASE结果 = "Accept";
+if execut状态 = "FINISHED" and 基本规则策略_AAA结果 = "" then 基本规则策略_AAA结果 = "Accept";
+if execut状态 = "FINISHED" and 基本规则策略_BBB结果 = "" then 基本规则策略_BBB结果 = "Accept";
+
 if execut状态 = "FINISHED" and JXL策略结果 = "" then JXL策略结果 = "Accept";
 if execut状态 = "FINISHED" and 流量控制策略结果 = "" then 流量控制策略结果 = "Accept";
 if execut状态 = "FINISHED" and 恶意申请策略结果 = "" then 恶意申请策略结果 = "Accept";
 if execut状态 = "FINISHED" and 异常申请策略结果 = "" then 异常申请策略结果 = "Accept";
+
 if execut状态 = "FINISHED" and FSYYS策略结果 = "" then FSYYS策略结果 = "Accept";
 if execut状态 = "FINISHED" and FSYYS策略_挑战者结果 = "" then FSYYS策略_挑战者结果 = "Accept";
+if execut状态 = "FINISHED" and FSYYS策略_BASE结果 = "" then FSYYS策略_BASE结果 = "Accept";
+if execut状态 = "FINISHED" and FSYYS策略_AAA结果 = "" then FSYYS策略_AAA结果 = "Accept";
+if execut状态 = "FINISHED" and FSYYS策略_BBB结果 = "" then FSYYS策略_BBB结果 = "Accept";
+if execut状态 = "FINISHED" and FSYYS策略_CCC结果 = "" then FSYYS策略_CCC结果 = "Accept";
+
 if execut状态 = "FINISHED" and FSDS策略结果 = "" then FSDS策略结果 = "Accept";
 if execut状态 = "FINISHED" and 关联规则策略结果 = "" then 关联规则策略结果 = "Accept";
 
