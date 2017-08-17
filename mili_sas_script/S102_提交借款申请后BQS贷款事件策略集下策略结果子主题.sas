@@ -318,14 +318,17 @@ quit;
 
 proc sort data = jbgz nodupkey; by main_info_id; run;
 proc sort data = jbgz_B nodupkey; by main_info_id; run;
+proc sort data = jbgz_BASE nodupkey; by main_info_id; run;
 proc sort data = jbgz_AAA nodupkey; by main_info_id; run;
 proc sort data = jbgz_BBB nodupkey; by main_info_id; run;
+
 proc sort data = jxl nodupkey; by main_info_id; run;
 proc sort data = llkz nodupkey; by main_info_id; run;
 proc sort data = eysq nodupkey; by main_info_id; run;
 proc sort data = ycsq nodupkey; by main_info_id; run;
 proc sort data = fsyys nodupkey; by main_info_id; run;
 proc sort data = fsyys_B nodupkey; by main_info_id; run;
+proc sort data = jbgz_BASE nodupkey; by main_info_id; run;
 proc sort data = fsyys_AAA nodupkey; by main_info_id; run;
 proc sort data = fsyys_BBB nodupkey; by main_info_id; run;
 proc sort data = fsyys_CCC nodupkey; by main_info_id; run;
