@@ -10,22 +10,22 @@ run;
 **得到复贷和新客户的数据集;
 data  benzi.ml_Demograph1_xz benzi.ml_Demograph1_fd  ;
 set bjb.ml_Demograph_simple;
-if 复贷申请^=1 then output benzi.ml_Demograph1_xz;
+if 订单类型="新客户订单" then output benzi.ml_Demograph1_xz;
 else if 复贷申请=1 then output benzi.ml_Demograph1_fd;
 if 申请提交日<=&dt.;
 run;
-*得到冠军的数据集;
-data  benzi.ml_Demograph1_A; 
-set bjb.ml_Demograph_simple;
-if loc_abmoduleflag = "A";
-if 申请提交日<=&dt.;
-run;
-*得到挑战者的数据集;
-data benzi.ml_Demograph1_B;
-set bjb.ml_Demograph_simple;
-if loc_abmoduleflag = "B";
-if 申请提交日<=&dt.;
-run;
+/**得到冠军的数据集;*/
+/*data  benzi.ml_Demograph1_A; */
+/*set bjb.ml_Demograph_simple;*/
+/*if loc_abmoduleflag = "A";*/
+/*if 申请提交日<=&dt.;*/
+/*run;*/
+/**得到挑战者的数据集;*/
+/*data benzi.ml_Demograph1_B;*/
+/*set bjb.ml_Demograph_simple;*/
+/*if loc_abmoduleflag = "B";*/
+/*if 申请提交日<=&dt.;*/
+/*run;*/
 
 
 %macro demo_0(use_database,class_g,i);
@@ -90,67 +90,85 @@ x "F:\米粒Demographics简版\Monthly_Demographics(米粒_total)_simple.xlsx";
 data demo_res_ttd_all;set demo_res;run;
 proc sql;
 create table demo_res_ttd_all_auto as
-select a.*,b.a_201612,b.a_201701,b.a_201702,b.a_201703,b.a_201704,b.a_201705,b.a_201706,b.a_201707 from var_name_left as a
+select a.*,b.a_201612,b.a_201701,b.a_201702,b.a_201703,b.a_201704,b.a_201705,b.a_201706,b.a_201707,b.a_201708,b.a_201709,b.a_201710 from var_name_left as a
 left join demo_res_ttd_all as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ttd_all_auto ;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c3:r400c3';
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c3:r400c3';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201612;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c5:r400c5';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201701;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c7:r400c7';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201702;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c9:r400c9';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201703;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c11:r400c11';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201704;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c13:r400c13';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201705;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c15:r400c15';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201706;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c17:r400c17';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201707;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c19:r400c19';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201708;*/
+/*run;*/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c21:r400c21';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_all_auto;*/
+/*file DD;*/
+/*put a_201709;*/
+/*run;*/
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c23:r400c23';
 data _null_;
 set Work.demo_res_ttd_all_auto;
 file DD;
-put a_201612;
+put a_201710;
 run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c5:r400c5';
-data _null_;
-set Work.demo_res_ttd_all_auto;
-file DD;
-put a_201701;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c7:r400c7';
-data _null_;
-set Work.demo_res_ttd_all_auto;
-file DD;
-put a_201702;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c9:r400c9';
-data _null_;
-set Work.demo_res_ttd_all_auto;
-file DD;
-put a_201703;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c11:r400c11';
-data _null_;
-set Work.demo_res_ttd_all_auto;
-file DD;
-put a_201704;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c13:r400c13';
-data _null_;
-set Work.demo_res_ttd_all_auto;
-file DD;
-put a_201705;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c15:r400c15';
-data _null_;
-set Work.demo_res_ttd_all_auto;
-file DD;
-put a_201706;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]TTD!r5c17:r400c17';
-data _null_;
-set Work.demo_res_ttd_all_auto;
-file DD;
-put a_201707;
-run;
-
 
 x "F:\米粒Demographics简版\Monthly_Demographics(米粒_新客户)_simple.xlsx";
 
@@ -159,66 +177,86 @@ x "F:\米粒Demographics简版\Monthly_Demographics(米粒_新客户)_simple.xlsx";
 data demo_res_ttd_xz;set demo_res;run;
 proc sql;
 create table demo_res_ttd_xz_auto as
-select a.*,b.a_201612,b.a_201701,b.a_201702,b.a_201703,b.a_201704,b.a_201705,b.a_201706,b.a_201707 from var_name_left as a
+select a.*,b.a_201612,b.a_201701,b.a_201702,b.a_201703,b.a_201704,b.a_201705,b.a_201706,b.a_201707,b.a_201708,b.a_201709,b.a_201710 from var_name_left as a
 left join demo_res_ttd_xz as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ttd_xz_auto ;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c3:r400c3';
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c3:r400c3';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201612;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c5:r400c5';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201701;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c7:r400c7';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201702;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c9:r400c9';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201703;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c11:r400c11';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201704;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c13:r400c13';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201705;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c15:r400c15';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201706;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c17:r400c17';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201707;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c19:r400c19';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201708;*/
+/*run;*/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c21:r400c21';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_xz_auto;*/
+/*file DD;*/
+/*put a_201709;*/
+/*run;*/
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c23:r400c23';
 data _null_;
 set Work.demo_res_ttd_xz_auto;
 file DD;
-put a_201612;
+put a_201710;
 run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c5:r400c5';
-data _null_;
-set Work.demo_res_ttd_xz_auto;
-file DD;
-put a_201701;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c7:r400c7';
-data _null_;
-set Work.demo_res_ttd_xz_auto;
-file DD;
-put a_201702;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c9:r400c9';
-data _null_;
-set Work.demo_res_ttd_xz_auto;
-file DD;
-put a_201703;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c11:r400c11';
-data _null_;
-set Work.demo_res_ttd_xz_auto;
-file DD;
-put a_201704;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c13:r400c13';
-data _null_;
-set Work.demo_res_ttd_xz_auto;
-file DD;
-put a_201705;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c15:r400c15';
-data _null_;
-set Work.demo_res_ttd_xz_auto;
-file DD;
-put a_201706;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]TTD!r5c17:r400c17';
-data _null_;
-set Work.demo_res_ttd_xz_auto;
-file DD;
-put a_201707;
-run;
 
 x "F:\米粒Demographics简版\Monthly_Demographics(米粒_复贷)_simple.xlsx";
 
@@ -227,115 +265,134 @@ x "F:\米粒Demographics简版\Monthly_Demographics(米粒_复贷)_simple.xlsx";
 data demo_res_ttd_fd;set demo_res;run;
 proc sql;
 create table demo_res_ttd_fd_auto as
-select a.*,b.a_201612,b.a_201701,b.a_201702,b.a_201703,b.a_201704,b.a_201705,b.a_201706,b.a_201707 from var_name_left as a
+select a.*,b.a_201612,b.a_201701,b.a_201702,b.a_201703,b.a_201704,b.a_201705,b.a_201706,b.a_201707,b.a_201708,b.a_201709,b.a_201710 from var_name_left as a
 left join demo_res_ttd_fd as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ttd_fd_auto ;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c3:r400c3';
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c3:r400c3';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201612;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c5:r400c5';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201701;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c7:r400c7';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201702;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c9:r400c9';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201703;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c11:r400c11';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201704;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c13:r400c13';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201705;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c15:r400c15';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201706;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c17:r400c17';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201707;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c19:r400c19';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201708;*/
+/*run;*/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c21:r400c21';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_fd_auto;*/
+/*file DD;*/
+/*put a_201709;*/
+/*run;*/
+filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c23:r400c23';
 data _null_;
 set Work.demo_res_ttd_fd_auto;
 file DD;
-put a_201612;
+put a_201710;
 run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c5:r400c5';
-data _null_;
-set Work.demo_res_ttd_fd_auto;
-file DD;
-put a_201701;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c7:r400c7';
-data _null_;
-set Work.demo_res_ttd_fd_auto;
-file DD;
-put a_201702;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c9:r400c9';
-data _null_;
-set Work.demo_res_ttd_fd_auto;
-file DD;
-put a_201703;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c11:r400c11';
-data _null_;
-set Work.demo_res_ttd_fd_auto;
-file DD;
-put a_201704;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c13:r400c13';
-data _null_;
-set Work.demo_res_ttd_fd_auto;
-file DD;
-put a_201705;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c15:r400c15';
-data _null_;
-set Work.demo_res_ttd_fd_auto;
-file DD;
-put a_201706;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]TTD!r5c17:r400c17';
-data _null_;
-set Work.demo_res_ttd_fd_auto;
-file DD;
-put a_201707;
-run;
-
-x "F:\米粒Demographics简版\Monthly_Demographics(米粒_冠军)_simple.xlsx";
-
-**demo_res_ttd_A_auto;
-%demo_0(use_database=benzi.ml_Demograph1_A,class_g=申请提交月份,i=21);
-data demo_res_ttd_A;set demo_res;run;
-proc sql;
-create table demo_res_ttd_A_auto as
-select a.*,b.a_201706,b.a_201707 from var_name_left as a
-left join demo_res_ttd_A as b on a.group=b.group and a.variable=b.variable;
-quit;
-proc sort data=demo_res_ttd_A_auto ;by id;run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_冠军)_simple.xlsx]TTD!r5c3:r400c3';
-data _null_;
-set Work.demo_res_ttd_A_auto;
-file DD;
-put a_201706;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_冠军)_simple.xlsx]TTD!r5c5:r400c5';
-data _null_;
-set Work.demo_res_ttd_A_auto;
-file DD;
-put a_201707;
-run;
-
-x "F:\米粒Demographics简版\Monthly_Demographics(米粒_挑战者)_simple.xlsx";
-
-**demo_res_ttd_B_auto;
-%demo_0(use_database=benzi.ml_Demograph1_B,class_g=申请提交月份,i=21);
-data demo_res_ttd_B;set demo_res;run;
-proc sql;
-create table demo_res_ttd_B_auto as
-select a.*,b.a_201706,b.a_201707 from var_name_left as a
-left join demo_res_ttd_B as b on a.group=b.group and a.variable=b.variable;
-quit;
-proc sort data=demo_res_ttd_B_auto ;by id;run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_挑战者)_simple.xlsx]TTD!r5c3:r400c3';
-data _null_;
-set Work.demo_res_ttd_B;
-file DD;
-put a_201706;
-run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_挑战者)_simple.xlsx]TTD!r5c5:r400c5';
-data _null_;
-set Work.demo_res_ttd_B;
-file DD;
-put a_201707;
-run;
+/*x "F:\米粒Demographics简版\Monthly_Demographics(米粒_冠军)_simple.xlsx";*/
+/**/
+/***demo_res_ttd_A_auto;*/
+/*%demo_0(use_database=benzi.ml_Demograph1_A,class_g=申请提交月份,i=21);*/
+/*data demo_res_ttd_A;set demo_res;run;*/
+/*proc sql;*/
+/*create table demo_res_ttd_A_auto as*/
+/*select a.*,b.a_201706,b.a_201707 from var_name_left as a*/
+/*left join demo_res_ttd_A as b on a.group=b.group and a.variable=b.variable;*/
+/*quit;*/
+/*proc sort data=demo_res_ttd_A_auto ;by id;run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_冠军)_simple.xlsx]TTD!r5c3:r400c3';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_A_auto;*/
+/*file DD;*/
+/*put a_201706;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_冠军)_simple.xlsx]TTD!r5c5:r400c5';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_A_auto;*/
+/*file DD;*/
+/*put a_201707;*/
+/*run;*/
+/**/
+/*x "F:\米粒Demographics简版\Monthly_Demographics(米粒_挑战者)_simple.xlsx";*/
+/**/
+/***demo_res_ttd_B_auto;*/
+/*%demo_0(use_database=benzi.ml_Demograph1_B,class_g=申请提交月份,i=21);*/
+/*data demo_res_ttd_B;set demo_res;run;*/
+/*proc sql;*/
+/*create table demo_res_ttd_B_auto as*/
+/*select a.*,b.a_201706,b.a_201707,b.a_201708 from var_name_left as a*/
+/*left join demo_res_ttd_B as b on a.group=b.group and a.variable=b.variable;*/
+/*quit;*/
+/*proc sort data=demo_res_ttd_B_auto ;by id;run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_挑战者)_simple.xlsx]TTD!r5c3:r400c3';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_B;*/
+/*file DD;*/
+/*put a_201706;*/
+/*run;*/
+/**/
+/*filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_挑战者)_simple.xlsx]TTD!r5c5:r400c5';*/
+/*data _null_;*/
+/*set Work.demo_res_ttd_B;*/
+/*file DD;*/
+/*put a_201707;*/
+/*run;*/

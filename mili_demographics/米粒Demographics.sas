@@ -49,11 +49,11 @@ set submart.bqsrule_face_submart;
 run;
 *7;
 data bjb.bqsrule_fsyys_submart;
-set submart.bqsrule_fsyys_submart submart.bqsrule_fsyys_b_submart;
+set submart.bqsrule_fsyys_submart;
 run;
 *8;
 data bjb.bqsrule_jbgz_submart;
-set submart.bqsrule_jbgz_submart submart.bqsrule_jbgz_b_submart;
+set submart.bqsrule_jbgz_submart;
 run;
 *9;
 data bjb.bqsrule_shixin_submart;
@@ -81,13 +81,13 @@ data bjb.Cxfeature;
 set submart.Cxfeature_na;
 *15;
 *°×ÆïÊ¿Êı¾İ;
-data bjb.loanevent_in;
-set submart.loanevent_in;
+data bjb.event_all;
+set submart.event_all;
 run;
 *16;
-*Ê¹ÓÃAB±êÇ©;
+*±êÇ©;
 data bjb.apply_flag;
-set submart.apply_flag(keep = apply_code loc_abmoduleflag);
+set submart.apply_flag(keep = Ê×´ÎÉêÇë ¶©µ¥ÀàĞÍ apply_code loc_abmoduleflag ÇşµÀ±êÇ©);
 run;
 
 **********************************************************************************************************;
@@ -106,6 +106,7 @@ CH_NAME ACCOUNT_STATUS PERIOD LOAN_DATE NEXT_REPAY_DATE LAST_REPAY_DATE BORROWER
 »¹¿îÌìÊı=NEXT_REPAY_DATE-LOAN_DATE;
 if kindex(PRODUCT_NAME,"Ã×Á£");
 if contract_no ^="PL148178693332002600000066";/*Õâ¸öÊÇÉ³Õñ»ªµÄ*/
+if not kindex(contract_no,"PB");
 run;
 proc sort data=mili;by id_number loan_date;run;
 data mili1;
@@ -232,7 +233,7 @@ b.MONTH_SALARY_NAME,c.ÉóºË´¦ÀíÔÂ·İ,c.ÉóºË´¦ÀíÈÕÆÚ,c.refuse_name from bjb.apply_s
 left join bjb.Baseinfo_submart as b on a.user_code=b.user_code
 left join bjb.approval_submart as c on a.apply_code=c.apply_code;
 quit;
-proc sort data=bjb.loanevent_in nodupkey;by apply_code;run;
+proc sort data=bjb.event_all nodupkey;by apply_code;run;
 proc sql;
 create table ttd_use1 as
 select a.*,b.loc_addresscnt,b.loc_appsl,b.loc_ava_exp,b.loc_callcount,b.loc_zmscore,b.loc_calledcount,
@@ -240,8 +241,8 @@ b.loc_inpast1st_calledtime,b.loc_inpast1st_calltime,b.loc_inpast2nd_calledtime,b
 b.loc_inpast3rd_calledtime,b.loc_inpast3rd_calltime,b.loc_phonenum,b.loc_register_date,b.loc_tel_fm_rank,
 b.loc_tel_jm_rank,b.loc_tel_po_rank,b.loc_tel_py_rank,b.loc_tel_qs_rank,b.loc_tel_qt_rank,b.loc_tel_ts_rank,
 b.loc_tel_tx_rank,b.loc_tel_xd_rank,b.loc_tel_zn_rank,b.loc_txlsl,b.loc_3mcnt_silent,b.loc_3mmaxcnt_silent,
-b.loc_1mcnt_silent,b.loc_1mmaxcnt_silent,b.loc_tqscore,b.ja_distance,b.ag_distance,b.jg_distance,b.×¡Ö·ÓëÊÕ»õµØ¾àÀë,
-b.µ¥Î»ÓëÊÕ»õµØ¾àÀë from ttd_use as a left join bjb.loanevent_in as  b on a.apply_code=b.apply_code;
+b.loc_1mcnt_silent,b.loc_1mmaxcnt_silent,b.loc_tqscore,b.loc_CreditxScore,b.ja_distance,b.ag_distance,b.jg_distance,b.×¡Ö·ÓëÊÕ»õµØ¾àÀë,
+b.µ¥Î»ÓëÊÕ»õµØ¾àÀë,b.loc_bjscore from ttd_use as a left join bjb.event_all as  b on a.apply_code=b.apply_code;
 quit;
 proc sort data=ttd_use1 nodupkey;by apply_code;run;
 
@@ -446,18 +447,18 @@ run;
 %macro Average_TAT();
 %do i =1 %to &lpn.;
 proc sql;
-create table ttd_use7 as 
+create table bjb.ttd_use7 as 
 select a.*,case when c.ruleType^="" then "1.ÊÇ" else "2.·ñ" end as &&gzn_&i
 from ttd_use7 as a
 left join bjb.risk_creditx_resp(where=(riskDesc="&&gz_&i")) as c on a.apply_code=c.apply_code;
 quit;
-proc sort data=ttd_use7 nodupkey;by apply_code;run;
+proc sort data=bjb.ttd_use7 nodupkey;by apply_code;run;
 %end;
 %mend;
 %Average_TAT();
  
 data bjb.ml_Demograph;
-set ttd_use7(drop=Ò»ÔÂ¶àÌ¨ ÈıÔÂ¶àÌ¨ ÆßÌì¶àÌ¨);
+set bjb.ttd_use7(drop=Ò»ÔÂ¶àÌ¨ ÈıÔÂ¶àÌ¨ ÆßÌì¶àÌ¨);
 input_complete=1;
 *ÁªÏµÈËÍ¨Ñ¶Â¼ÅÅÃû:0-Ã»Ìî,999-ÌîÁËÃ»Í¨¹ı»°,È±Ê§-Ö®Ç°Ã»Õâ¸ö¹¦ÄÜ;
 
@@ -501,7 +502,7 @@ SEX_NAME_group age_g MARRIAGE_NAME_g DEGREE_NAME_g period_g JOB_g home_g company
 salary_g loc_appsl_g loc_txlsl_g  ÉêÇëÌá½»µã_g ÆßÌì¶àÌ¨ Ò»ÔÂ¶àÌ¨ ÈıÔÂ¶àÌ¨ Ö¥Âé·ÖÇø¼ä Í¨»°¾àÀëÉêÇëÇø¼ä ½üÈı×î¾²Ä¬Çø¼ä 
 ½üÈı¾²Ä¬Çø¼ä ½üÒ»×î¾²Ä¬Çø¼ä ½üÒ»¾²Ä¬Çø¼ä app¸öÊıÇø¼ä appÖÖÀàÇø¼ä ÊÖÈİÕ¼±È ¹ıÒ»Í¨´Î ¹ıÈıÍ¨´Î ¹ıÒ»±»½Ğ±È ¹ıÒ»¶ÌÍ¨´Î ¹ıÒ»¶ÌÖ÷½Ğ 
 ¹ıÈı¶ÌÍ¨´Î ¹ıÈı¶ÌÖ÷½Ğ ¹ıÒ»½ôÍ¨´Î ¹ıÈı½ôÍ¨´Î ¹ıÒ»»§Í¨´Î ¹ıÈı»§Í¨´Î ¹ıÒ»ÈıÏßÍ¨´Î ¹ıÈıÈıÏßÍ¨´Î ×îÒ»±»´ß´Î ×îÈı±»´ß´Î ×îÒ»±»ÌØÊâ´Î  
-×îÈı±»ÌØÊâ´Î ÌìÆô·ÖÇø¼ä µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä ×¡Ö·ÓëGPS¾àÀëÇø¼ä µ¥Î»ÓëGPS¾àÀëÇø¼ä ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä $20.;
+×îÈı±»ÌØÊâ´Î µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä ×¡Ö·ÓëGPS¾àÀëÇø¼ä µ¥Î»ÓëGPS¾àÀëÇø¼ä ×¡Ö·ÓëÊÕ»õµØ¾àÀëÇø¼ä µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä ÌìÆô·ÖÇø¼ä ±ù¼ø·ÖÇø¼ä $20.;
 
 length company_province_g $100.;
 format company_province_g $100.;
@@ -765,15 +766,6 @@ else if last1m_callcnt_rate_in<=0.65 then ¹ıÒ»±»½Ğ±È="8.[61%,65%]";
 else if last1m_callcnt_rate_in<=0.7 then ¹ıÒ»±»½Ğ±È="9.[66%,70%]";
 else if last1m_callcnt_rate_in>0.7 then ¹ıÒ»±»½Ğ±È="9_1.[71%+]";
 
-
-if loc_zmscore in (.,0) then Ö¥Âé·ÖÇø¼ä="z-Missing";
-else if 350<=loc_zmscore<500 then Ö¥Âé·ÖÇø¼ä="6.[350,499]";
-else if 500<=loc_zmscore<550 then Ö¥Âé·ÖÇø¼ä="5.[500,549]";
-else if 550<=loc_zmscore<600 then Ö¥Âé·ÖÇø¼ä="4.[550,599]";
-else if 600<=loc_zmscore<650 then Ö¥Âé·ÖÇø¼ä="3.[600,649]";
-else if 650<=loc_zmscore<700 then Ö¥Âé·ÖÇø¼ä="2.[650,699]";
-else if loc_zmscore>=700 then Ö¥Âé·ÖÇø¼ä="1.[700+]";
-
 if Í¨»°¾àÀëÉêÇë=. then Í¨»°¾àÀëÉêÇëÇø¼ä="z-Missing";
 else if 0<Í¨»°¾àÀëÉêÇë<=5 then Í¨»°¾àÀëÉêÇëÇø¼ä="1.[1,5]";
 else if 5<Í¨»°¾àÀëÉêÇë<=15 then Í¨»°¾àÀëÉêÇëÇø¼ä="2.[5,15]";
@@ -1007,10 +999,15 @@ else if 50<=loc_txlsl<100 then loc_txlsl_g="5. 50-99¸ö";
 else if loc_txlsl>=100 then loc_txlsl_g="6. 100¸öÒÔÉÏ";
 
 
-if 0<=loc_appsl<=5 then loc_appsl_g="1. 0-5¸ö";
-else if 5<loc_appsl<=10 then loc_appsl_g="2. 6-10¸ö";
-else if 10<loc_appsl<=15 then loc_appsl_g="3. 11-15¸ö";
-else if loc_appsl>15 then loc_appsl_g="4. 16¸öÒÔÉÏ";
+if loc_appsl=0 then loc_appsl_g="1. 0¸ö";
+else if loc_appsl=1 then loc_appsl_g="2. 1¸ö";
+else if loc_appsl=2 then loc_appsl_g="3. 2¸ö";
+else if loc_appsl=3 then loc_appsl_g="4. 3¸ö";
+else if loc_appsl=4 then loc_appsl_g="5. 4¸ö";
+else if loc_appsl=5 then loc_appsl_g="6. 5¸ö";
+else if 5<loc_appsl<=10 then loc_appsl_g="7. 6-10¸ö";
+else if 10<loc_appsl<=15 then loc_appsl_g="8. 11-15¸ö";
+else if loc_appsl>15 then loc_appsl_g="9. 16¸öÒÔÉÏ";
 
 if ÉêÇë½á¹û="ÈË¹¤Í¨¹ı" then check_final=1;else check_final=0;
 
@@ -1101,16 +1098,6 @@ else if JOB_COMPANY_PROVINCE_NAME="Çàº£Ê¡" then company_province_g="630000-Çàº£Ê
 else if JOB_COMPANY_PROVINCE_NAME="ÄşÏÄ»Ø×å×ÔÖÎÇø" then company_province_g="640000-ÄşÏÄ»Ø×å×ÔÖÎÇø";
 else if JOB_COMPANY_PROVINCE_NAME="ĞÂ½®Î¬Îá¶û×ÔÖÎÇø" then company_province_g="650000-ĞÂ½®Î¬Îá¶û×ÔÖÎÇø";
 
-if loc_tqscore in (.,0) then ÌìÆô·ÖÇø¼ä="z-Missing";
-else if 0<=loc_tqscore<408 then ÌìÆô·ÖÇø¼ä="1.(0,408)";
-else if loc_tqscore=408 then ÌìÆô·ÖÇø¼ä="2.408";
-else if 408<loc_tqscore<450 then ÌìÆô·ÖÇø¼ä="3.(408,450)";
-else if 450<=loc_tqscore<500 then ÌìÆô·ÖÇø¼ä="4.[450,500)";
-else if 500<=loc_tqscore<550 then ÌìÆô·ÖÇø¼ä="5.[500,550)";
-else if 550<=loc_tqscore<600 then ÌìÆô·ÖÇø¼ä="6.[550,600)";
-else if 600<=loc_tqscore<650 then ÌìÆô·ÖÇø¼ä="7.[600,650)";
-else if 650<=loc_tqscore<850 then ÌìÆô·ÖÇø¼ä="8.[650,850)";
-
 if ja_distance in (.,0) then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="z-Missing";
 else if 0<=ja_distance<0.1 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="1.(0,0.1)";
 else if 0.1<=ja_distance<0.2 then µ¥Î»µØÖ·ºÍ×¡Ö·¾àÀëÇø¼ä="2.[0.1,0.2)";
@@ -1175,6 +1162,37 @@ else if 5<=µ¥Î»ÓëÊÕ»õµØ¾àÀë <10 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="8.[5,10)";
 else if 10<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<20 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="9.[10,20)";
 else if 20<=µ¥Î»ÓëÊÕ»õµØ¾àÀë<30 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="9_1.[20,30)";
 else if µ¥Î»ÓëÊÕ»õµØ¾àÀë>30 then µ¥Î»ÓëÊÕ»õµØ¾àÀëÇø¼ä="9_2.[30,6000)";
+
+if loc_zmscore in (.,0) then Ö¥Âé·ÖÇø¼ä="z-Missing";
+else if 350<=loc_zmscore<500 then Ö¥Âé·ÖÇø¼ä="1.[350,500)";
+else if 500<=loc_zmscore<550 then Ö¥Âé·ÖÇø¼ä="2.[500,550)";
+else if 550<=loc_zmscore<600 then Ö¥Âé·ÖÇø¼ä="3.[550,600)";
+else if 600<=loc_zmscore<620 then Ö¥Âé·ÖÇø¼ä="4.[600,620)";
+else if 620<=loc_zmscore<650 then Ö¥Âé·ÖÇø¼ä="5.[620,650)";
+else if 650<=loc_zmscore<700 then Ö¥Âé·ÖÇø¼ä="6.[650,700)";
+else if loc_zmscore>=700 then Ö¥Âé·ÖÇø¼ä="7.[700+]";
+
+if loc_tqscore in (.,0) then ÌìÆô·ÖÇø¼ä="z-Missing";
+else if 0<=loc_tqscore<408 then ÌìÆô·ÖÇø¼ä="1.(0,408)";
+else if loc_tqscore=408 then ÌìÆô·ÖÇø¼ä="2.408";
+else if 408<loc_tqscore<450 then ÌìÆô·ÖÇø¼ä="3.(408,450)";
+else if 450<=loc_tqscore<500 then ÌìÆô·ÖÇø¼ä="4.[450,500)";
+else if 500<=loc_tqscore<550 then ÌìÆô·ÖÇø¼ä="5.[500,550)";
+else if 550<=loc_tqscore<600 then ÌìÆô·ÖÇø¼ä="6.[550,600)";
+else if 600<=loc_tqscore<650 then ÌìÆô·ÖÇø¼ä="7.[600,650)";
+else if 650<=loc_tqscore<850 then ÌìÆô·ÖÇø¼ä="8.[650,850)";
+
+if loc_bjscore in (.,0) then ±ù¼ø·ÖÇø¼ä="z-Missing";
+else if loc_bjscore in (-1) then ±ù¼ø·ÖÇø¼ä="-1";
+else if 0<=loc_bjscore<400 then ±ù¼ø·ÖÇø¼ä="1.[0,400)";
+else if 400<=loc_bjscore<450 then ±ù¼ø·ÖÇø¼ä="2.[400,450)";
+else if 450<=loc_bjscore<500 then ±ù¼ø·ÖÇø¼ä="3.[450,500)";
+else if 500<=loc_bjscore<550 then ±ù¼ø·ÖÇø¼ä="4.[500,550)";
+else if 550<=loc_bjscore<600 then ±ù¼ø·ÖÇø¼ä="5.[550,600)";
+else if 600<=loc_bjscore<650 then ±ù¼ø·ÖÇø¼ä="6.[600,650)";
+else if 650<=loc_bjscore<750 then ±ù¼ø·ÖÇø¼ä="7.[650,750)";
+else if loc_bjscore>=750 then ±ù¼ø·ÖÇø¼ä="8.[750+]";
+
 run;
 
 
@@ -1193,7 +1211,7 @@ run;
 
 **ÌùÉÏABµÄ±êÇ©;
 proc sort data=bjb.apply_flag nodupkey;by apply_code;run;
-proc sort data=bjb.ml_Demograph nodupkey;by apply_code;run;
+proc sort data=bjb.ml_Demograph(drop = Ê×´ÎÉêÇë ¶©µ¥ÀàĞÍ loc_abmoduleflag ÇşµÀ±êÇ©) nodupkey;by apply_code;run;
 
 data bjb.ml_Demograph;
 merge bjb.ml_Demograph(in = a) bjb.apply_flag(in = b);

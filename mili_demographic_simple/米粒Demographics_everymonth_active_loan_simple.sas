@@ -26,35 +26,35 @@ if apply_code^="";
 count=1;
 if od_days>5 then od5=1;else od5=0;
 if od_days>15 then od15=1;else od15=0;
-if 客户标签=1 then output benzi.active_loan_every_m_xz;
+if 订单类型="新客户订单" then output benzi.active_loan_every_m_xz;
 else if 客户标签^=1 then output benzi.active_loan_every_m_fd;
 run;
-**冠军;
-data benzi.active_loan_every_m_A;
-set benzi.active_loan;
-if 账户标签 not in ("未放款","待还款");
-if apply_code^="";
-count=1;
-if od_days>5 then od5=1;else od5=0;
-if od_days>15 then od15=1;else od15=0;
-if loc_abmoduleflag = "A";
-run;
-**挑战者;
-data benzi.active_loan_every_m_B;
-set benzi.active_loan;
-if 账户标签 not in ("未放款","待还款");
-if apply_code^="";
-count=1;
-if od_days>5 then od5=1;else od5=0;
-if od_days>15 then od15=1;else od15=0;
-if loc_abmoduleflag = "B";
-run;
+/***冠军;*/
+/*data benzi.active_loan_every_m_A;*/
+/*set benzi.active_loan;*/
+/*if 账户标签 not in ("未放款","待还款");*/
+/*if apply_code^="";*/
+/*count=1;*/
+/*if od_days>5 then od5=1;else od5=0;*/
+/*if od_days>15 then od15=1;else od15=0;*/
+/*if loc_abmoduleflag = "A";*/
+/*run;*/
+/***挑战者;*/
+/*data benzi.active_loan_every_m_B;*/
+/*set benzi.active_loan;*/
+/*if 账户标签 not in ("未放款","待还款");*/
+/*if apply_code^="";*/
+/*count=1;*/
+/*if od_days>5 then od5=1;else od5=0;*/
+/*if od_days>15 then od15=1;else od15=0;*/
+/*if loc_abmoduleflag = "B";*/
+/*run;*/
 
 
 ***造一个关于放款月的宏变量到后面使用;
 data _null_;
 format dt yymmdd10.;
-if year(today()) = 2004 then dt = intnx("year", today() - 1, 13, "same"); else dt = today() - 1;
+if year(today()) = 2004 then dt = intnx("year", today() - 3, 13, "same"); else dt = today() - 3;
 call symput("dt", dt);
 nt=intnx("day",dt,1);
 call symput("nt", nt);
@@ -140,9 +140,9 @@ proc sort data=&type&&month_&k ;by id;run;
 
 %demo_0(use_database=benzi.active_loan_every_m_xz,i=21,type=demo_res_active_xz);
 
-%demo_0(use_database=benzi.active_loan_every_m_A,i=21,type=demo_res_active_A);
-
-%demo_0(use_database=benzi.active_loan_every_m_B,i=21,type=demo_res_active_B);
+/*%demo_0(use_database=benzi.active_loan_every_m_A,i=21,type=demo_res_active_A);*/
+/**/
+/*%demo_0(use_database=benzi.active_loan_every_m_B,i=21,type=demo_res_active_B);*/
 
 data benzi.active_loan_every_5_all;
 set benzi.active_loan_every_m_all;
@@ -159,15 +159,15 @@ set benzi.active_loan_every_m_xz;
 if od5=1;
 run;
 
-data benzi.active_loan_every_5_A;
-set benzi.active_loan_every_m_A;
-if od5=1;
-run;
-
-data benzi.active_loan_every_5_B;
-set benzi.active_loan_every_m_B;
-if od5=1;
-run;
+/*data benzi.active_loan_every_5_A;*/
+/*set benzi.active_loan_every_m_A;*/
+/*if od5=1;*/
+/*run;*/
+/**/
+/*data benzi.active_loan_every_5_B;*/
+/*set benzi.active_loan_every_m_B;*/
+/*if od5=1;*/
+/*run;*/
 
 
 %macro demo_0(use_database,i,type);
@@ -238,9 +238,9 @@ proc sort data=&type&&month_&k ;by id;run;
 
 %demo_0(use_database=benzi.active_loan_every_5_xz,i=21,type=demo_res_ever15_xz);
 
-%demo_0(use_database=benzi.active_loan_every_5_A,i=21,type=demo_res_ever15_A);
-
-%demo_0(use_database=benzi.active_loan_every_5_B,i=21,type=demo_res_ever15_B);
+/*%demo_0(use_database=benzi.active_loan_every_5_A,i=20,type=demo_res_ever15_A);*/
+/**/
+/*%demo_0(use_database=benzi.active_loan_every_5_B,i=20,type=demo_res_ever15_B);*/
 
 **开始获取每个月的demo_res_90_all_的表;
 
@@ -256,14 +256,14 @@ data benzi.active_loan_every_15_xz;
 set benzi.active_loan_every_m_xz;
 if od15=1;
 run;
-data benzi.active_loan_every_15_A;
-set benzi.active_loan_every_m_A;
-if od15=1;
-run;
-data benzi.active_loan_every_15_B;
-set benzi.active_loan_every_m_B;
-if od15=1;
-run;
+/*data benzi.active_loan_every_15_A;*/
+/*set benzi.active_loan_every_m_A;*/
+/*if od15=1;*/
+/*run;*/
+/*data benzi.active_loan_every_15_B;*/
+/*set benzi.active_loan_every_m_B;*/
+/*if od15=1;*/
+/*run;*/
 
 %macro demo_0(use_database,i,type);
 %do k=1 %to &lcn.;
@@ -333,9 +333,9 @@ proc sort data=&type&&month_&k ;by id;run;
 
 %demo_0(use_database=benzi.active_loan_activeloan_15_xz,i=21,type=demo_res_90_xz);
 
-%demo_0(use_database=benzi.active_loan_activeloan_15_A,i=21,type=demo_res_90_A);
-
-%demo_0(use_database=benzi.active_loan_activeloan_15_B,i=21,type=demo_res_90_B);
+/*%demo_0(use_database=benzi.active_loan_activeloan_15_A,i=20,type=demo_res_90_A);*/
+/**/
+/*%demo_0(use_database=benzi.active_loan_activeloan_15_B,i=20,type=demo_res_90_B);*/
 
 
 
@@ -360,7 +360,7 @@ proc sort data=demo_res_ods_all_&&month_&k;by id;run;
 
 /*x "F:\米粒Demographics\Monthly_Demographics(米粒_total).xlsx";*/
 
-filename DD DDE "EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]&&month_&k.!r5c3:r1000c5";
+filename DD DDE "EXCEL|[Monthly_Demographics(米粒_total)_simple.xlsx]&&month_&k.!r5c3:r400c5";
 data _null_;
 set Work.demo_res_ods_all_&&month_&k;
 file DD;
@@ -389,7 +389,7 @@ if a;
 run;
 proc sort data=demo_res_ods_fd_&&month_&k;by id;run;
 
-filename DD DDE "EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]&&month_&k.!r5c3:r1000c5";
+filename DD DDE "EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]&&month_&k.!r5c3:r400c5";
 data _null_;
 set Work.demo_res_ods_fd_&&month_&k;
 file DD;
@@ -418,7 +418,7 @@ if a;
 run;
 proc sort data=demo_res_ods_xz_&&month_&k;by id;run;
 
-filename DD DDE "EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]&&month_&k.!r5c3:r1000c5";
+filename DD DDE "EXCEL|[Monthly_Demographics(米粒_新客户)_simple.xlsx]&&month_&k.!r5c3:r400c5";
 data _null_;
 set Work.demo_res_ods_xz_&&month_&k;
 file DD;
@@ -429,63 +429,63 @@ run;
 %mend;
 %demo_3();
 
-**冠军;
-%macro demo_4();
-%do k=7 %to &lcn.;
-
-data demo_res_ever15_2_&&month_&k; set Demo_res_ever15_A&&month_&k; rename count_N=count_N_15;run;
-data demo_res_90_2_&&month_&k; set Demo_res_90_B&&month_&k; rename count_N=count_N_90;run;
-
-proc sort data=demo_res_active_A&&month_&k nodupkey;by id;run;
-proc sort data=demo_res_ever15_2_&&month_&k nodupkey;by id;run;
-proc sort data=demo_res_90_2_&&month_&k nodupkey;by id;run;
-
-data demo_res_ods_A_&&month_&k;
-merge demo_res_active_A&&month_&k(in=a) demo_res_ever15_2_&&month_&k(in=b) demo_res_90_2_&&month_&k(in=c);
-by id;
-if a;
-run;
-proc sort data=demo_res_ods_A_&&month_&k;by id;run;
-
-filename DD DDE "EXCEL|[Monthly_Demographics(米粒_冠军)_simple.xlsx]&&month_&k.!r5c3:r1000c5";
-data _null_;
-set Work.demo_res_ods_A_&&month_&k;
-file DD;
-put count_N count_N_15 count_N_90;
-run;
-
-%end;
-%mend;
-%demo_4();
-
-**挑战者;
-%macro demo_5();
-%do k=7 %to &lcn.;
-
-data demo_res_ever15_2_&&month_&k; set Demo_res_ever15_B&&month_&k; rename count_N=count_N_15;run;
-data demo_res_90_2_&&month_&k; set Demo_res_90_B&&month_&k; rename count_N=count_N_90;run;
-
-proc sort data=demo_res_active_B&&month_&k nodupkey;by id;run;
-proc sort data=demo_res_ever15_2_&&month_&k nodupkey;by id;run;
-proc sort data=demo_res_90_2_&&month_&k nodupkey;by id;run;
-
-data demo_res_ods_B_&&month_&k;
-merge demo_res_active_B&&month_&k(in=a) demo_res_ever15_2_&&month_&k(in=b) demo_res_90_2_&&month_&k(in=c);
-by id;
-if a;
-run;
-proc sort data=demo_res_ods_B_&&month_&k;by id;run;
-
-filename DD DDE "EXCEL|[Monthly_Demographics(米粒_挑战者)_simple.xlsx]&&month_&k.!r5c3:r1000c5";
-data _null_;
-set Work.demo_res_ods_B_&&month_&k;
-file DD;
-put count_N count_N_15 count_N_90;
-run;
-
-%end;
-%mend;
-%demo_5();
+/***冠军;*/
+/*%macro demo_4();*/
+/*%do k=7 %to &lcn.;*/
+/**/
+/*data demo_res_ever15_2_&&month_&k; set Demo_res_ever15_A&&month_&k; rename count_N=count_N_15;run;*/
+/*data demo_res_90_2_&&month_&k; set Demo_res_90_B&&month_&k; rename count_N=count_N_90;run;*/
+/**/
+/*proc sort data=demo_res_active_A&&month_&k nodupkey;by id;run;*/
+/*proc sort data=demo_res_ever15_2_&&month_&k nodupkey;by id;run;*/
+/*proc sort data=demo_res_90_2_&&month_&k nodupkey;by id;run;*/
+/**/
+/*data demo_res_ods_A_&&month_&k;*/
+/*merge demo_res_active_A&&month_&k(in=a) demo_res_ever15_2_&&month_&k(in=b) demo_res_90_2_&&month_&k(in=c);*/
+/*by id;*/
+/*if a;*/
+/*run;*/
+/*proc sort data=demo_res_ods_A_&&month_&k;by id;run;*/
+/**/
+/*filename DD DDE "EXCEL|[Monthly_Demographics(米粒_冠军)_simple.xlsx]&&month_&k.!r5c3:r400c5";*/
+/*data _null_;*/
+/*set Work.demo_res_ods_A_&&month_&k;*/
+/*file DD;*/
+/*put count_N count_N_15 count_N_90;*/
+/*run;*/
+/**/
+/*%end;*/
+/*%mend;*/
+/*%demo_4();*/
+/**/
+/***挑战者;*/
+/*%macro demo_5();*/
+/*%do k=7 %to &lcn.;*/
+/**/
+/*data demo_res_ever15_2_&&month_&k; set Demo_res_ever15_B&&month_&k; rename count_N=count_N_15;run;*/
+/*data demo_res_90_2_&&month_&k; set Demo_res_90_B&&month_&k; rename count_N=count_N_90;run;*/
+/**/
+/*proc sort data=demo_res_active_B&&month_&k nodupkey;by id;run;*/
+/*proc sort data=demo_res_ever15_2_&&month_&k nodupkey;by id;run;*/
+/*proc sort data=demo_res_90_2_&&month_&k nodupkey;by id;run;*/
+/**/
+/*data demo_res_ods_B_&&month_&k;*/
+/*merge demo_res_active_B&&month_&k(in=a) demo_res_ever15_2_&&month_&k(in=b) demo_res_90_2_&&month_&k(in=c);*/
+/*by id;*/
+/*if a;*/
+/*run;*/
+/*proc sort data=demo_res_ods_B_&&month_&k;by id;run;*/
+/**/
+/*filename DD DDE "EXCEL|[Monthly_Demographics(米粒_挑战者)_simple.xlsx]&&month_&k.!r5c3:r400c5";*/
+/*data _null_;*/
+/*set Work.demo_res_ods_B_&&month_&k;*/
+/*file DD;*/
+/*put count_N count_N_15 count_N_90;*/
+/*run;*/
+/**/
+/*%end;*/
+/*%mend;*/
+/*%demo_5();*/
 
 
 /*填入sheet201612*/

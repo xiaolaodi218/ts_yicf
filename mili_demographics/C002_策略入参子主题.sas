@@ -1,3 +1,4 @@
+    
 *****************************************
 	策略入参子主题
 *****************************************;
@@ -15,12 +16,36 @@ run;
 
 data bqsreq ;
 set submart.bqsreq;
+
 format loc_ava_exp1 BEST12.;
 format loc_tel_fm_rank1 BEST12.;
 format loc_tel_po_rank1 BEST12.;
 format loc_tel_py_rank1 BEST12.;
 format loc_tel_qs_rank1 BEST12.;
 format loc_tel_ts_rank1 BEST12.;
+format loc_addresscnt1 BEST12.;
+format loc_ava_limit1 BEST12.;
+format loc_callcount1 BEST12.;
+format loc_calledcount1 BEST12.;
+format loc_inpast1st_calledtime1 BEST12.;
+format loc_inpast1st_calltime1 BEST12.;
+format loc_inpast2nd_calledtime1 BEST12.;
+format loc_inpast2nd_calltime1 BEST12.;
+format loc_inpast3rd_calledtime1 BEST12.;
+format loc_inpast3rd_calltime1 BEST12.;
+format loc_limit1 BEST12.;
+format loc_phonenum1 BEST12.;
+format loc_unusnalflag1 BEST12.;
+format loc_CreditxScore1 BEST12.;
+
+format loc_6mmaxcnt_silent1 BEST12.;
+format loc_3mmaxcnt_silent1 BEST12.;
+format loc_1mmaxcnt_silent1 BEST12.;
+format loc_6mcnt_silent1 BEST12.;
+format loc_3mcnt_silent1 BEST12.;
+format loc_1mcnt_silent1 BEST12.;
+format loc_zmscore1 BEST12.;
+
 
 loc_ava_exp1 = loc_ava_exp;
 loc_tel_fm_rank1 = loc_tel_fm_rank;
@@ -28,6 +53,29 @@ loc_tel_po_rank1 = loc_tel_po_rank;
 loc_tel_py_rank1 = loc_tel_py_rank;
 loc_tel_qs_rank1 = loc_tel_qs_rank;
 loc_tel_ts_rank1 = loc_tel_ts_rank;
+loc_addresscnt1 = loc_addresscnt;
+loc_ava_limit1 = loc_ava_limit;
+loc_callcount1 = loc_callcount;
+loc_calledcount1 = loc_calledcount;
+loc_inpast1st_calledtime1 = loc_inpast1st_calledtime;
+loc_inpast1st_calltime1 = loc_inpast1st_calltime;
+loc_inpast2nd_calledtime1 = loc_inpast2nd_calledtime;
+loc_inpast2nd_calltime1 = loc_inpast2nd_calltime;
+loc_inpast3rd_calledtime1  = loc_inpast3rd_calledtime;
+loc_inpast3rd_calltime1 = loc_inpast3rd_calltime;
+loc_limit1 = loc_limit;
+loc_phonenum1 =loc_phonenum;
+loc_unusnalflag1 = loc_unusnalflag;
+loc_CreditxScore1 = loc_CreditxScore;
+
+loc_6mmaxcnt_silent1 =loc_6mmaxcnt_silent;
+loc_3mmaxcnt_silent1 = loc_3mmaxcnt_silent;
+loc_1mmaxcnt_silent1 = loc_1mmaxcnt_silent;
+loc_6mcnt_silent1 = loc_6mcnt_silent;
+loc_3mcnt_silent1 = loc_3mcnt_silent;
+loc_1mcnt_silent1 = loc_1mcnt_silent;
+loc_zmscore1 = loc_zmscore;
+
 run;
 
 data loanevent;
@@ -46,13 +94,43 @@ loc_limit
 loc_phonenum 
 loc_unusnalflag 
 loc_CreditxScore 
+
+loc_6mmaxcnt_silent
+loc_3mmaxcnt_silent
+loc_1mmaxcnt_silent
+loc_6mcnt_silent
+loc_3mcnt_silent
+loc_1mcnt_silent
+loc_zmscore
 );
 rename loc_ava_exp1 = loc_ava_exp
 loc_tel_fm_rank1 = loc_tel_fm_rank
 loc_tel_po_rank1 = loc_tel_po_rank
 loc_tel_py_rank1 = loc_tel_py_rank
 loc_tel_qs_rank1 = loc_tel_qs_rank
-loc_tel_ts_rank1 = loc_tel_ts_rank;
+loc_tel_ts_rank1 = loc_tel_ts_rank
+loc_addresscnt1 = loc_addresscnt
+loc_ava_limit1 = loc_ava_limit
+loc_callcount1 = loc_callcount
+loc_calledcount1 = loc_calledcount
+loc_inpast1st_calledtime1 = loc_inpast1st_calledtime
+loc_inpast1st_calltime1 = loc_inpast1st_calltime
+loc_inpast2nd_calledtime1 = loc_inpast2nd_calledtime
+loc_inpast2nd_calltime1 = loc_inpast2nd_calltime
+loc_inpast3rd_calledtime1  = loc_inpast3rd_calledtime
+loc_inpast3rd_calltime1 = loc_inpast3rd_calltime
+loc_limit1 = loc_limit
+loc_phonenum1 =loc_phonenum
+loc_unusnalflag1 = loc_unusnalflag
+loc_CreditxScore1 = loc_CreditxScore
+
+loc_6mmaxcnt_silent1 =loc_6mmaxcnt_silent
+loc_3mmaxcnt_silent1 = loc_3mmaxcnt_silent
+loc_1mmaxcnt_silent1 = loc_1mmaxcnt_silent
+loc_6mcnt_silent1 = loc_6mcnt_silent
+loc_3mcnt_silent1 = loc_3mcnt_silent
+loc_1mcnt_silent1 = loc_1mcnt_silent
+loc_zmscore1 = loc_zmscore;
 run;
 
 /*data submart.bqsreq ;*/
@@ -66,9 +144,24 @@ getnames=yes;
 run;
 
 **TQ_score;
-proc import datafile="D:\mili\Datamart\pyscript\submart\tqreq.xlsx"
-out=submart.tqreq_score dbms=excel replace;
+proc import datafile="D:\mili\Datamart\pyscript\submart\decreq.xlsx"
+out=submart.decreq_score dbms=excel replace;
 getnames=yes;
+run;
+
+data decreq_score ;
+set submart.decreq_score;
+format loc_bjscore1 BEST12.;
+
+loc_bjscore1 = loc_bjscore;
+
+run;
+
+data decreq_score;
+set decreq_score(drop=loc_bjscore );
+
+rename loc_bjscore1 = loc_bjscore;
+
 run;
 
 **reloan;
@@ -76,6 +169,52 @@ proc import datafile="D:\mili\Datamart\pyscript\submart\req_bqs_reloan.xlsx"
 out=submart.req_bqs_reloan dbms=excel replace;
 getnames=yes;
 run;
+
+data req_bqs_reloan ;
+set submart.req_bqs_reloan;
+
+format loc_6mmaxcnt_silent1 BEST12.;
+format loc_3mmaxcnt_silent1 BEST12.;
+format loc_1mmaxcnt_silent1 BEST12.;
+format loc_6mcnt_silent1 BEST12.;
+format loc_3mcnt_silent1 BEST12.;
+format loc_1mcnt_silent1 BEST12.;
+format loc_zmscore1 BEST12.;
+
+loc_6mmaxcnt_silent1 =loc_6mmaxcnt_silent;
+loc_3mmaxcnt_silent1 = loc_3mmaxcnt_silent;
+loc_1mmaxcnt_silent1 = loc_1mmaxcnt_silent;
+loc_6mcnt_silent1 = loc_6mcnt_silent;
+loc_3mcnt_silent1 = loc_3mcnt_silent;
+loc_1mcnt_silent1 = loc_1mcnt_silent;
+loc_zmscore1 = loc_zmscore;
+
+run;
+
+data req_bqs_reloan1;
+set req_bqs_reloan(drop = loc_6mmaxcnt_silent
+loc_3mmaxcnt_silent
+loc_1mmaxcnt_silent
+loc_6mcnt_silent
+loc_3mcnt_silent
+loc_1mcnt_silent
+loc_zmscore
+);
+
+rename loc_6mmaxcnt_silent1 =loc_6mmaxcnt_silent
+loc_3mmaxcnt_silent1 = loc_3mmaxcnt_silent
+loc_1mmaxcnt_silent1 = loc_1mmaxcnt_silent
+loc_6mcnt_silent1 = loc_6mcnt_silent
+loc_3mcnt_silent1 = loc_3mcnt_silent
+loc_1mcnt_silent1 = loc_1mcnt_silent
+loc_zmscore1 = loc_zmscore;
+
+run;
+
+
+
+
+
 
 *************贷款事件*******************************************;
 data loanBQS;
@@ -137,7 +276,7 @@ if a;
 run;
 
 data req_bqs_reloan;
-set submart.req_bqs_reloan;
+set req_bqs_reloan1;
 rename id = data_query_log_id;
 run;
 
@@ -167,18 +306,18 @@ by main_info_id;
 if a;
 run;
 
-**天启分;
+**天启分，冰鉴分;
 
-data tqreq;
-set submart.tqreq_score(keep = id loc_tqscore);
+data dereq;
+set decreq_score(keep = id loc_tqscore loc_bjscore);
 rename id = data_query_log_id;
 run;
 
 proc sort data = decisionevent nodupkey; by data_query_log_id; run;
-proc sort data = tqreq nodupkey; by data_query_log_id; run;
+proc sort data = dereq nodupkey; by data_query_log_id; run;
 
 data submart.decisionevent_in;
-merge decisionevent(in = a) tqreq(in = b); 
+merge decisionevent(in = a) dereq(in = b); 
 by data_query_log_id;
 if a;
 run;

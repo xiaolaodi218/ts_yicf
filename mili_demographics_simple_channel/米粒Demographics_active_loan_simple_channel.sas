@@ -1,8 +1,4 @@
-********************************************************************************************************************
-/*appstore、xiaomi	低风险策略*/
-/*oppo、yingyongbao、vivo、qihu360	高风险策略*/
-/*51kabao、taoqianbao、kuaiqiandai、mijisu、meizu、rongyijie	中风险策略*/
-/*zhongxin、其他	70%（abmoduleflag=A）走高风险策略，30%（abmoduleflag=B）走中风险策略*/
+********************************************************************************************************************;
 
 *active_loan;
 ***渠道1;
@@ -14,7 +10,8 @@ count=1;
 if od_days>5 then od5=1;else od5=0;
 if od_days>15 then od15=1;else od15=0;
 **筛选新客户;
-if 客户标签=1;
+if 订单类型="新客户订单";
+**下面这个标签会筛选出拒绝客户订单和极速贷订单;/*if 客户标签=1;*/
 if 渠道标签=1;
 run;
 
@@ -27,7 +24,7 @@ count=1;
 if od_days>5 then od5=1;else od5=0;
 if od_days>15 then od15=1;else od15=0;
 **筛选新客户;
-if 客户标签=1;
+if 订单类型="新客户订单";
 if 渠道标签=2;
 run;
 
@@ -40,23 +37,8 @@ count=1;
 if od_days>5 then od5=1;else od5=0;
 if od_days>15 then od15=1;else od15=0;
 **筛选新客户;
-if 客户标签=1;
+if 订单类型="新客户订单";
 if 渠道标签=3;
-run;
-
-**渠道4;
-data benzi.active_loan_activeloan_m_chanel4;
-set benzi.active_loan;
-if 账户标签 not in ("未放款","待还款");
-if apply_code^="";
-count=1;
-if od_days>5 then od5=1;
-else od5=0;
-if od_days>15 then od15=1;
-else od15=0;
-**筛选新客户;
-if 客户标签=1;
-if 渠道标签=4;
 run;
 
 %macro demo_0(use_database,i);
@@ -130,14 +112,6 @@ left join demo_res as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_active_chanel3;by id;run;
 
-%demo_0(use_database=benzi.active_loan_activeloan_m_chanel4,i=21);
-proc sql;
-create table demo_res_active_chanel4 as
-select a.*,b.count_N from var_name_left as a
-left join demo_res as b on a.group=b.group and a.variable=b.variable;
-quit;
-proc sort data=demo_res_active_chanel4;by id;run;
-
 
 **获取逾期5+天的;
 data benzi.active_loan_activeloan_5_chanel1;
@@ -152,11 +126,6 @@ data benzi.active_loan_activeloan_5_chanel3;
 set benzi.active_loan_activeloan_m_chanel3;
 if od5=1;
 run;
-data benzi.active_loan_activeloan_5_chanel4;
-set benzi.active_loan_activeloan_m_chanel4;
-if od5=1;
-run;
-
 
 %macro demo_0(use_database,i);
 %do n=1 %to &i.;
@@ -229,14 +198,6 @@ left join demo_res_ever15 as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_ever15_chanel3 ;by id;run;
 
-%demo_0(use_database=benzi.active_loan_activeloan_5_chanel4,i=21);
-proc sql;
-create table demo_res_ever15_chanel4 as
-select a.*,b.count_N from var_name_left as a
-left join demo_res_ever15 as b on a.group=b.group and a.variable=b.variable;
-quit;
-proc sort data=demo_res_ever15_chanel4 ;by id;run;
-
 
 **获取逾期15+天的;
 data benzi.activeloan_activeloan_15_chanel1;
@@ -251,11 +212,6 @@ data benzi.activeloan_activeloan_15_chanel3;
 set benzi.active_loan_activeloan_m_chanel3;
 if od15=1;
 run;
-data benzi.activeloan_activeloan_15_chanel4;
-set benzi.active_loan_activeloan_m_chanel4;
-if od15=1;
-run;
-
 
 %macro demo_0(use_database,i);
 %do n=1 %to &i.;
@@ -329,15 +285,6 @@ left join demo_res_900 as b on a.group=b.group and a.variable=b.variable;
 quit;
 proc sort data=demo_res_90_chanel3 ;by id;run;
 
-%demo_0(use_database=benzi.activeloan_activeloan_15_chanel4,i=21);
-proc sql;
-create table demo_res_90_chanel4 as
-select a.*,b.count_N from var_name_left as a
-left join demo_res_900 as b on a.group=b.group and a.variable=b.variable;
-quit;
-proc sort data=demo_res_90_chanel4;by id;run;
-
-
 /*proc export data=demo_res_90*/
 /*outfile="F:\WORK\Report\Demographics\output\&work_Day.\demo_res_ever_90_&work_Day..csv"*/
 /*dbms=csv*/
@@ -347,7 +294,7 @@ proc sort data=demo_res_90_chanel4;by id;run;
 
 /*链接active ever15+ ever90+*/
 
-******************整体;
+******************渠道1;
 /*x "F:\米粒Demographics\Monthly_Demographics(米粒_total).xlsx";*/
 
 data demo_res_ever15_2_chanel1;set demo_res_ever15_chanel1;rename count_N=count_N_15;run;
@@ -362,7 +309,7 @@ if a;
 run;
 proc sort data=demo_res_ods_chanel1;by id;run;
 
-filename DD DDE "EXCEL|[Monthly_Demographics(渠道1)_simple.xlsx]Active Loan!r5c33:r400c35";
+filename DD DDE "EXCEL|[Monthly_Demographics(渠道1)_simple.xlsx]Active Loan!r5c3:r400c5";
 data _null_;
 set Work.demo_res_ods_chanel1;
 file DD;
@@ -370,7 +317,7 @@ put count_N count_N_15 count_N_90;
 run;
 
 
-**********************新客户;
+**********************渠道2;
 /*x "F:\米粒Demographics\Monthly_Demographics(米粒_新客户).xlsx";*/
 
 data demo_res_ever15_2_chanel2;set demo_res_ever15_chanel2;rename count_N=count_N_15;run;
@@ -385,53 +332,31 @@ if a;
 run;
 proc sort data=demo_res_ods_chanel2;by id;run;
 
-filename DD DDE "EXCEL|[Monthly_Demographics(渠道2)_simple.xlsx]Active Loan!r5c33:r400c35";
+filename DD DDE "EXCEL|[Monthly_Demographics(渠道2)_simple.xlsx]Active Loan!r5c3:r400c5";
 data _null_;
 set Work.demo_res_ods_chanel2;
 file DD;
 put count_N count_N_15 count_N_90;
 run;
 
-*********************复贷;
+*********************渠道3;
 /*x "F:\米粒Demographics\Monthly_Demographics(米粒_复贷).xlsx";*/
 
-data demo_res_ever15_2_chanel3;set demo_res_ever15_fd;rename count_N=count_N_15;run;
-data demo_res_90_2_fd;set demo_res_90_fd;rename count_N=count_N_90;run;
-proc sort data=demo_res_active_fd nodupkey;by id;run;
-proc sort data=demo_res_ever15_2_fd nodupkey;by id;run;
-proc sort data=demo_res_90_2_fd nodupkey;by id;run;
-data demo_res_ods_fd;
-merge demo_res_active_fd(in=a) demo_res_ever15_2_fd(in=b) demo_res_90_2_fd(in=c);
+data demo_res_ever15_2_chanel3;set demo_res_ever15_chanel3;rename count_N=count_N_15;run;
+data demo_res_90_2_chanel3;set demo_res_90_chanel3;rename count_N=count_N_90;run;
+proc sort data=demo_res_active_chanel3 nodupkey;by id;run;
+proc sort data=demo_res_ever15_2_chanel3 nodupkey;by id;run;
+proc sort data=demo_res_90_2_chanel3 nodupkey;by id;run;
+data demo_res_ods_chanel3;
+merge demo_res_active_chanel3(in=a) demo_res_ever15_2_chanel3(in=b) demo_res_90_2_chanel3(in=c);
 by id;
 if a;
 run;
-proc sort data=demo_res_ods_fd;by id;run;
+proc sort data=demo_res_ods_chanel3;by id;run;
 
-filename DD DDE 'EXCEL|[Monthly_Demographics(米粒_复贷)_simple.xlsx]Active Loan!r5c33:r400c35';
+filename DD DDE 'EXCEL|[Monthly_Demographics(渠道3)_simple.xlsx]Active Loan!r5c3:r400c5';
 data _null_;
 set Work.demo_res_ods_chanel3;
-file DD;
-put count_N count_N_15 count_N_90;
-run;
-
-********************冠军;
-/*x "F:\米粒Demographics\Monthly_Demographics(米粒_冠军).xlsx";*/
-
-data demo_res_ever15_2_chanel4;set demo_res_ever15_chanel4;rename count_N=count_N_15;run;
-data demo_res_90_2_chanel4;set demo_res_90_chanel4;rename count_N=count_N_90;run;
-proc sort data=demo_res_active_chanel4 nodupkey;by id;run;
-proc sort data=demo_res_ever15_2_chanel4 nodupkey;by id;run;
-proc sort data=demo_res_90_2_chanel4 nodupkey;by id;run;
-data demo_res_ods_chanel4;
-merge demo_res_active_chanel4(in=a) demo_res_ever15_2_chanel4(in=b) demo_res_90_2_chanel4(in=c);
-by id;
-if a;
-run;
-proc sort data=demo_res_ods_chanel4;by id;run;
-
-filename DD DDE 'EXCEL|[Monthly_Demographics(渠道4)_simple.xlsx]Active Loan!r5c3:r400c5';
-data _null_;
-set Work.demo_res_ods_chanel4;
 file DD;
 put count_N count_N_15 count_N_90;
 run;

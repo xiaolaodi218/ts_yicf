@@ -16,7 +16,7 @@ CH_NAME ACCOUNT_STATUS PERIOD LOAN_DATE NEXT_REPAY_DATE LAST_REPAY_DATE BORROWER
 还款天数=sum(NEXT_REPAY_DATE,-LOAN_DATE);
 if kindex(PRODUCT_NAME,"米粒");
 if contract_no ^="PL148178693332002600000066";/*这个是沙振华的*/
-
+if not kindex(contract_no,"PB");
 run;
 proc sort data=mili;by id_number loan_date;run;
 data mili1;
@@ -128,30 +128,16 @@ if PRODUCT_NAME="米粒10" then 策略标签="银策略";else 策略标签="金策略";
 run;
 proc sort data=repayfin.milipayment_report(where=(cut_date=&dt.)) out=ct_payment;by 还款天数;run;
 
-**加入渠道;
-data source_channel;
-set submart.apply_submart(keep = apply_code 来源渠道);
-rename apply_code = contract_no;
-run;
-
-proc sort data=source_channel ;by contract_no;run;
-proc sort data=ct_payment;by contract_no;run;
-data ct_payment_report;
-merge ct_payment(in=a) source_channel(in=b);
-by contract_no;
-if a;
-run;
-
-**贴上AB的标签;
+**贴上标签;
 data flag;
 set submart.apply_flag;
 rename apply_code = contract_no;
 run;
 proc sort data=flag nodupkey;by contract_no;run;
-proc sort data=ct_payment_report nodupkey;by contract_no;run;
+proc sort data=ct_payment nodupkey;by contract_no;run;
 
 data repayFin.ct_payment_report;
-merge ct_payment_report(in = a) flag(in = b);
+merge ct_payment(in = a) flag(in = b);
 by contract_no;
 if a;
 run;
@@ -161,7 +147,7 @@ proc sort data = repayFin.ct_payment_report nodupkey; by contract_no; run;
 *整体;
 data kan;
 set repayFin.ct_payment_report;
-if 放款月份 in ("201612","201701","201702","201703","201704","201705","201706","201707");
+if 放款月份 in ("201612","201701","201702","201703","201704","201705","201706","201707","201708","201709");
 *这句话很重要，之前一直没有添加，导致近期催回率的分子是在&dt后，即催回率偏高，但很早之前的催回率不受影响，看看要不要修改;
 if clear_date>cut_date then clear_date=.;
 format CLEAR_DATE yymmdd10.;
@@ -179,6 +165,8 @@ else if 31<=逾期天数<=60 and BILL_STATUS="0000" then 逾期催回31_60=1;
 else if 61<=逾期天数<=90 and BILL_STATUS="0000" then 逾期催回61_90=1;
 else if 逾期天数>90 and BILL_STATUS="0000" then 逾期催回90=1;
 
+if 4<=逾期天数<=30 and BILL_STATUS="0000" then 逾期催回4_30=1;
+
 
 if 逾期天数>3 then 逾期_a3=1;
 if 逾期天数>10 then 逾期_a10=1;
@@ -243,10 +231,17 @@ proc sql;
 create table kan14 as
 select 放款月份,sum(催回)/sum(逾期) as 总催回率 format=percent7.2 from kan group by 放款月份;
 quit;
+
+proc sql;
+create table kan15 as
+select 放款月份,sum(逾期催回90)/count(*) as a90天以上回收率 format=percent7.2 from kan group by 放款月份;
+quit;
+
+
 proc sql;
 create table kan_all as
-select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,
-h.a16_30催回率,i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率 from kan1 as a
+select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,h.a16_30催回率,
+i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率,o.a90天以上回收率 from kan1 as a
 left join kan2 as b on a.放款月份=b.放款月份
 left join kan3 as c on a.放款月份=c.放款月份
 left join kan4 as d on a.放款月份=d.放款月份
@@ -259,51 +254,52 @@ left join kan10 as j on a.放款月份=j.放款月份
 left join kan11 as k on a.放款月份=k.放款月份
 left join kan12 as l on a.放款月份=l.放款月份
 left join kan13 as m on a.放款月份=m.放款月份
-left join kan14 as n on a.放款月份=n.放款月份;
+left join kan14 as n on a.放款月份=n.放款月份
+left join kan15 as o on a.放款月份=o.放款月份;
 quit;
 
 x "F:\米粒坏账率预测\坏账比率(米粒).xlsx";
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c1:r10c3';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c1:r12c3';
 data _null_;
 set Work.Kan_all;
 file DD;
 put 放款月份 自然逾期率 a1_3催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c5:r10c5';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c5:r12c5';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a4_10催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c7:r10c7';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c7:r12c7';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a11_15催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c9:r10c9';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c9:r12c9';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a16_30催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c11:r10c11';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c11:r12c11';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a31_60催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c13:r10c13';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c13:r12c13';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a61_90催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c15:r10c15';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r3c15:r12c16';
 data _null_;
 set Work.Kan_all;
 file DD;
-put 总催回率;
+put 总催回率 a90天以上回收率;
 run;
 
 
@@ -311,7 +307,7 @@ run;
 data kan;
 set repayFin.ct_payment_report;
 if 客户标签=1;
-if 放款月份 in ("201612","201701","201702","201703","201704","201705","201706","201707");
+if 放款月份 in ("201612","201701","201702","201703","201704","201705","201706","201707","201708","201708","201709");
 *这句话很重要，之前一直没有添加，导致近期催回率的分子是在&dt后，即催回率偏高，但很早之前的催回率不受影响，看看要不要修改;
 if clear_date>cut_date then clear_date=.;
 format CLEAR_DATE yymmdd10.;
@@ -394,9 +390,14 @@ create table kan14 as
 select 放款月份,sum(催回)/sum(逾期) as 总催回率 format=percent7.2 from kan group by 放款月份;
 quit;
 proc sql;
+create table kan15 as
+select 放款月份,sum(逾期催回90)/count(*) as a90天以上回收率 format=percent7.2 from kan group by 放款月份;
+quit;
+
+proc sql;
 create table kan_all as
-select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,
-h.a16_30催回率,i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率 from kan1 as a
+select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,h.a16_30催回率,
+i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率,o.a90天以上回收率 from kan1 as a
 left join kan2 as b on a.放款月份=b.放款月份
 left join kan3 as c on a.放款月份=c.放款月份
 left join kan4 as d on a.放款月份=d.放款月份
@@ -409,57 +410,59 @@ left join kan10 as j on a.放款月份=j.放款月份
 left join kan11 as k on a.放款月份=k.放款月份
 left join kan12 as l on a.放款月份=l.放款月份
 left join kan13 as m on a.放款月份=m.放款月份
-left join kan14 as n on a.放款月份=n.放款月份;
+left join kan14 as n on a.放款月份=n.放款月份
+left join kan15 as o on a.放款月份=o.放款月份;
 quit;
 
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c1:r30c3';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c1:r32c3';
 data _null_;
 set Work.Kan_all;
 file DD;
 put 放款月份 自然逾期率 a1_3催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c5:r30c5';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c5:r32c5';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a4_10催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c7:r30c7';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c7:r32c7';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a11_15催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c9:r30c9';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c9:r32c9';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a16_30催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c11:r30c11';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c11:r32c11';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a31_60催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c13:r30c13';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c13:r32c13';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a61_90催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c15:r30c15';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r23c15:r32c16';
 data _null_;
 set Work.Kan_all;
 file DD;
-put 总催回率;
+put 总催回率 a90天以上回收率;
 run;
+
 
 *复贷;
 data kan;
 set repayFin.ct_payment_report;
 if 客户标签>1;
-if 放款月份 in ("201612","201701","201702","201703","201704","201705","201706","201707");
+if 放款月份 in ("201612","201701","201702","201703","201704","201705","201706","201707","201708","201709");
 *这句话很重要，之前一直没有添加，导致近期催回率的分子是在&dt后，即催回率偏高，但很早之前的催回率不受影响，看看要不要修改;
 if clear_date>cut_date then clear_date=.;
 format CLEAR_DATE yymmdd10.;
@@ -541,10 +544,16 @@ proc sql;
 create table kan14 as
 select 放款月份,sum(催回)/sum(逾期) as 总催回率 format=percent7.2 from kan group by 放款月份;
 quit;
+
+proc sql;
+create table kan15 as
+select 放款月份,sum(逾期催回90)/count(*) as a90天以上回收率 format=percent7.2 from kan group by 放款月份;
+quit;
+
 proc sql;
 create table kan_all as
-select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,
-h.a16_30催回率,i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率 from kan1 as a
+select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,h.a16_30催回率,
+i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率,o.a90天以上回收率 from kan1 as a
 left join kan2 as b on a.放款月份=b.放款月份
 left join kan3 as c on a.放款月份=c.放款月份
 left join kan4 as d on a.放款月份=d.放款月份
@@ -557,50 +566,51 @@ left join kan10 as j on a.放款月份=j.放款月份
 left join kan11 as k on a.放款月份=k.放款月份
 left join kan12 as l on a.放款月份=l.放款月份
 left join kan13 as m on a.放款月份=m.放款月份
-left join kan14 as n on a.放款月份=n.放款月份;
+left join kan14 as n on a.放款月份=n.放款月份
+left join kan15 as o on a.放款月份=o.放款月份;
 quit;
 
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c1:r50c3';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c1:r52c3';
 data _null_;
 set Work.Kan_all;
 file DD;
 put 放款月份 自然逾期率 a1_3催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c5:r50c5';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c5:r52c5';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a4_10催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c7:r50c7';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c7:r52c7';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a11_15催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c9:r50c9';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c9:r52c9';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a16_30催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c11:r50c11';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c11:r52c11';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a31_60催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c13:r50c13';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c13:r52c13';
 data _null_;
 set Work.Kan_all;
 file DD;
 put a61_90催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c15:r50c15';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r43c15:r52c16';
 data _null_;
 set Work.Kan_all;
 file DD;
-put 总催回率;
+put 总催回率 a90天以上回收率;
 run;
 
 
@@ -608,7 +618,7 @@ run;
 data kan_A;
 set repayFin.ct_payment_report;
 if loc_abmoduleflag="A";
-if 放款月份 in ("201706","201707");
+if 放款月份 in ("201706","201707","201708","201709");
 if clear_date>cut_date then clear_date=.;
 format CLEAR_DATE yymmdd10.;
 if 账户标签 not in ("待还款","扣款失败","未放款");
@@ -624,7 +634,6 @@ else if 16<=逾期天数<=30 and BILL_STATUS="0000" then 逾期催回16_30=1;
 else if 31<=逾期天数<=60 and BILL_STATUS="0000" then 逾期催回31_60=1;
 else if 61<=逾期天数<=90 and BILL_STATUS="0000" then 逾期催回61_90=1;
 else if 逾期天数>90 and BILL_STATUS="0000" then 逾期催回90=1;
-
 
 if 逾期天数>3 then 逾期_a3=1;
 if 逾期天数>10 then 逾期_a10=1;
@@ -690,9 +699,14 @@ create table kan14 as
 select 放款月份,sum(催回)/sum(逾期) as 总催回率 format=percent7.2 from kan_A group by 放款月份;
 quit;
 proc sql;
+create table kan15 as
+select 放款月份,sum(逾期催回90)/count(*) as a90天以上回收率 format=percent7.2 from kan group by 放款月份;
+quit;
+
+proc sql;
 create table kan_all_A as
-select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,
-h.a16_30催回率,i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率 from kan1 as a
+select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,h.a16_30催回率,
+i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率,o.a90天以上回收率 from kan1 as a
 left join kan2 as b on a.放款月份=b.放款月份
 left join kan3 as c on a.放款月份=c.放款月份
 left join kan4 as d on a.放款月份=d.放款月份
@@ -705,7 +719,8 @@ left join kan10 as j on a.放款月份=j.放款月份
 left join kan11 as k on a.放款月份=k.放款月份
 left join kan12 as l on a.放款月份=l.放款月份
 left join kan13 as m on a.放款月份=m.放款月份
-left join kan14 as n on a.放款月份=n.放款月份;
+left join kan14 as n on a.放款月份=n.放款月份
+left join kan15 as o on a.放款月份=o.放款月份;
 quit;
 
 filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r63c1:r78c3';
@@ -744,18 +759,18 @@ set Work.kan_all_A;
 file DD;
 put a61_90催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r63c15:r78c15';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r63c15:r78c16';
 data _null_;
 set Work.kan_all_A;
 file DD;
-put 总催回率;
+put 总催回率 a90天以上回收率;
 run;
 
 *挑战者;
 data kan_B;
 set repayFin.ct_payment_report;
 if loc_abmoduleflag="B";
-if 放款月份 in ("201706","201707");
+if 放款月份 in ("201706","201707","201708","201709");
 if clear_date>cut_date then clear_date=.;
 format CLEAR_DATE yymmdd10.;
 if 账户标签 not in ("待还款","扣款失败","未放款");
@@ -836,10 +851,16 @@ proc sql;
 create table kan14 as
 select 放款月份,sum(催回)/sum(逾期) as 总催回率 format=percent7.2 from kan_B group by 放款月份;
 quit;
+
+proc sql;
+create table kan15 as
+select 放款月份,sum(逾期催回90)/count(*) as a90天以上回收率 format=percent7.2 from kan group by 放款月份;
+quit;
+
 proc sql;
 create table kan_all_B as
-select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,
-h.a16_30催回率,i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率 from kan1 as a
+select a.*,b.a1_3催回率,c.a3天以上逾期率,d.a4_10催回率,e.a10天以上逾期率,f.a11_15催回率,g.a15天以上逾期率,h.a16_30催回率,
+i.a30天以上逾期率,j.a31_60催回率,k.a60天以上逾期率,l.a61_90催回率,m.总坏账率,n.总催回率,o.a90天以上回收率 from kan1 as a
 left join kan2 as b on a.放款月份=b.放款月份
 left join kan3 as c on a.放款月份=c.放款月份
 left join kan4 as d on a.放款月份=d.放款月份
@@ -852,7 +873,8 @@ left join kan10 as j on a.放款月份=j.放款月份
 left join kan11 as k on a.放款月份=k.放款月份
 left join kan12 as l on a.放款月份=l.放款月份
 left join kan13 as m on a.放款月份=m.放款月份
-left join kan14 as n on a.放款月份=n.放款月份;
+left join kan14 as n on a.放款月份=n.放款月份
+left join kan15 as o on a.放款月份=o.放款月份;
 quit;
 
 filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r83c1:r98c3';
@@ -891,19 +913,19 @@ set Work.kan_all_B;
 file DD;
 put a61_90催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r83c15:r98c15';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]坏账比率!r83c15:r98c16';
 data _null_;
 set Work.kan_all_B;
 file DD;
-put 总催回率;
+put 总催回率 a90天以上回收率;
 run;
 
 
 *************************************************************************;
-***以渠道为维度;
+***以渠道为维度(新客户);
 data kan_source;
 set repayFin.ct_payment_report;
-if 客户标签=1;
+if 订单类型 = "新客户订单";
 if clear_date>cut_date then clear_date=.;
 format CLEAR_DATE yymmdd10.;
 if 账户标签 not in ("待还款","扣款失败","未放款");
@@ -919,7 +941,6 @@ else if 16<=逾期天数<=30 and BILL_STATUS="0000" then 逾期催回16_30=1;
 else if 31<=逾期天数<=60 and BILL_STATUS="0000" then 逾期催回31_60=1;
 else if 61<=逾期天数<=90 and BILL_STATUS="0000" then 逾期催回61_90=1;
 else if 逾期天数>90 and BILL_STATUS="0000" then 逾期催回90=1;
-
 
 if 逾期天数>3 then 逾期_a3=1;
 if 逾期天数>10 then 逾期_a10=1;
@@ -1019,43 +1040,43 @@ if a;
 run;
 proc sort data=kan_source_channel;by descending COUNT;run;
 
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r69c1:r110c3';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r3c1:r110c3';
 data _null_;
 set Work.kan_source_channel;
 file DD;
 put 来源渠道 自然逾期率 a1_3催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r69c5:r110c5';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r3c5:r110c5';
 data _null_;
 set Work.kan_source_channel;
 file DD;
 put a4_10催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r69c7:r110c7';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r3c7:r110c7';
 data _null_;
 set Work.kan_source_channel;
 file DD;
 put a11_15催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r69c9:r110c9';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r3c9:r110c9';
 data _null_;
 set Work.kan_source_channel;
 file DD;
 put a16_30催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r69c11:r110c11';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r3c11:r110c11';
 data _null_;
 set Work.kan_source_channel;
 file DD;
 put a31_60催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r69c13:r110c13';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r3c13:r110c13';
 data _null_;
 set Work.kan_source_channel;
 file DD;
 put a61_90催回率;
 run;
-filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r69c15:r110c16';
+filename DD DDE 'EXCEL|[坏账比率(米粒).xlsx]新客户渠道分布!r3c15:r110c16';
 data _null_;
 set Work.kan_source_channel;
 file DD;
@@ -1067,8 +1088,8 @@ run;
 ***以渠道为维度的放款月份分布;
 data kan_every_month;
 set repayFin.ct_payment_report;
-if 客户标签=1;
-if 放款月份 in ("201612","201701","201702","201703","201704","201705","201706","201707");
+if 订单类型 = "新客户订单";
+if 放款月份 in ("201612","201701","201702","201703","201704","201705","201706","201707","201708","201709");
 *这句话很重要，之前一直没有添加，导致近期催回率的分子是在&dt后，即催回率偏高，但很早之前的催回率不受影响，看看要不要修改;
 if clear_date>cut_date then clear_date=.;
 format CLEAR_DATE yymmdd10.;
@@ -1085,7 +1106,6 @@ else if 16<=逾期天数<=30 and BILL_STATUS="0000" then 逾期催回16_30=1;
 else if 31<=逾期天数<=60 and BILL_STATUS="0000" then 逾期催回31_60=1;
 else if 61<=逾期天数<=90 and BILL_STATUS="0000" then 逾期催回61_90=1;
 else if 逾期天数>90 and BILL_STATUS="0000" then 逾期催回90=1;
-
 
 if 逾期天数>3 then 逾期_a3=1;
 if 逾期天数>10 then 逾期_a10=1;
@@ -1220,7 +1240,7 @@ file DD;
 put a4_10催回率;
 run;
 
-filename DD DDE "EXCEL|[坏账比率(米粒).xlsx]&&month_&k!r40c7:r40c7";
+filename DD DDE "EXCEL|[坏账比率(米粒).xlsx]&&month_&k!r4c7:r40c7";
 data _null_;
 set Work.kan_source_channel_&&month_&k;
 file DD;
