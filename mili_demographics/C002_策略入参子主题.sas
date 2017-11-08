@@ -260,9 +260,16 @@ run;
 
 
 **************复贷事件***********************************************;
-data reloanevent;
+data Reloanbqs;
 set submart.Reloanbqs_loan_submart(keep = apply_code main_info_id execut日期 execut月份 os_type execut状态);
 run;
+data Reloansimplebqs;
+set submart.Reloansimplebqs_loan_submart(keep = apply_code main_info_id execut日期 execut月份 os_type execut状态);
+run;
+data reloanevent;
+set Reloanbqs Reloansimplebqs;
+run;
+
 data main_log_id;
 set dpraw.bqs_main_info(keep = id data_query_log_id);
 rename id = main_info_id;
