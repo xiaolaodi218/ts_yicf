@@ -54,6 +54,16 @@ run;
 proc sort data = loanbqs_faceRecognition nodupkey; by apply_code descending invoke_record_id; run;
 proc sort data = loanbqs_faceRecognition nodupkey; by apply_code; run;
 
+/*白骑士众网策略集（众网事件）*/
+data loanbqs_zhongwang;
+set submart.loanbqs_submart(keep = invoke_record_id apply_code event_name execut状态 execut结果 execut日期 execut月份 
+						   where = (event_name = "custzhongwang"));
+rename execut状态 = execut状态_zhongwang execut结果 = execut结果_zhongwang execut日期 = execut日期_zhongwang execut月份 = execut月份_zhongwang;
+drop event_name;
+run;
+proc sort data = loanbqs_zhongwang nodupkey; by apply_code descending invoke_record_id; run;
+proc sort data = loanbqs_zhongwang nodupkey; by apply_code; run;
+
 
 /*极速贷策略集（小额打款事件）*/
 data paybqs;
@@ -104,6 +114,7 @@ merge apply(in = t)
 	loancx_fraud(in = f)
 	loancx_score(in = g)
 	loanbqs_decision(in = h);
+/*	loanbqs_zhongwang(in = i)*/
 by apply_code;
 if t & a;
 if execut结果_invitation = "" then execut结果_invitation = execut结果_loan; 

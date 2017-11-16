@@ -41,15 +41,18 @@ data submart.invoke_record;
 set invoke_record;
 run;
 
-data loan_invoke hold_invoke dynamic_invoke pay_invoke reloan_invoke reloan_simple_invoke;
+data loan_invoke hold_invoke dynamic_invoke pay_invoke reloan_invoke reloan_simple_invoke zhongrong_invoke;
 set submart.invoke_record;
-	 if event_type = "LOAN" then output loan_invoke;
+	 if event_type in ("LOAN","ZHONGRONG_LOAN") then output loan_invoke;
 else if event_type = "HOLD" then output hold_invoke;
 else if event_type = "SEND_DYNAMIC" then output dynamic_invoke;
 else if event_type = "MINI_AMOUNT_PAY" then output pay_invoke;
 else if event_type = "RELOAN" then output reloan_invoke;
 else if event_type = "RELOAN_SIMPLE" then output reloan_simple_invoke;
+
 run;
+
+
 
 ***策略执行;
 data strategy_execution;
@@ -135,6 +138,80 @@ else if risk_blkloan = 1 then 名单贷款事件结果 = "ACCEPT";
 if invoke状态 = "ERROR" then 名单贷款事件结果 = "ERROR";
 drop risk event_type phone_no type risk_blkloan;
 run;
+
+
+
+
+/****BQS下众网的结果;*/
+/*proc sql;*/
+/*create table loan_bqszw_result as*/
+/*select a.*, b.**/
+/*from zhongrong_invoke as a left join */
+/*bqs_execution as b on a.invoke_record_id = b.invoke_record_id*/
+/*where execution_id ^= .*/
+/*;*/
+/*quit;*/
+/*/*BQS各策略集结果*/*/
+/*/*data submart.loanBQS_blk_submart submart.loanBQS_loan_submart submart.loanBQS_face_submart submart.loanBQS_invi_submart submart.loanBQS_acq_submart;*/*/
+/*/*set loan_bqs_result;*/*/
+/*/*	 if event_name = "blacklist" then output submart.loanBQS_blk_submart;*/*/
+/*/*else if event_name = "loan" then output submart.loanBQS_loan_submart;*/*/
+/*/*else if event_name = "faceRecognition" then output submart.loanBQS_face_submart;*/*/
+/*/*else if event_name = "invitation" then output submart.loanBQS_invi_submart;*/*/
+/*/*else if event_name = "acquire" then output submart.loanBQS_acq_submart;*/*/
+/*/*run;*/*/
+/**/
+/*data bqszw_engine_result_1;*/
+/*set loan_bqszw_result(keep = invoke_record_id execut结果 event_name);*/
+/*	 if execut结果 = "REJECT" then executrisk = 3;*/
+/*else if execut结果 = "REVIEW" then executrisk = 2;*/
+/*else if execut结果 = "ACCEPT" then executrisk = 1;*/
+/*else executrisk = 0;*/
+/*drop execut结果;*/
+/*run;*/
+/*proc sql;*/
+/*create table bqs_engine_result_2 as*/
+/*select invoke_record_id, max(executrisk) as risk*/
+/*from bqs_engine_result_1*/
+/*group by invoke_record_id*/
+/*;*/
+/*quit;*/
+/*proc sql;*/
+/*create table bqs_engine_result_3 as*/
+/*select invoke_record_id, max(executrisk) as risk_blkloan*/
+/*from bqs_engine_result_1*/
+/*where event_name in ("blacklist", "loan")*/
+/*group by invoke_record_id*/
+/*;*/
+/*quit;*/
+/**/
+/*proc sort data = loan_bqs_result; by invoke_record_id; run;*/
+/*proc sort data = bqs_engine_result_2 nodupkey; by invoke_record_id; run;*/
+/*proc sort data = bqs_engine_result_3 nodupkey; by invoke_record_id; run;*/
+/*data submart.loanBQS_submart;*/
+/*merge loan_bqs_result(in = a) bqs_engine_result_2(in = b) bqs_engine_result_3(in = c);*/
+/*by invoke_record_id;*/
+/*if a;*/
+/*	 if risk = 3 then 引擎结果 = "REJECT";*/
+/*else if risk = 2 then 引擎结果 = "REVIEW";*/
+/*else if risk = 1 then 引擎结果 = "ACCEPT";*/
+/*if invoke状态 = "ERROR" then 引擎结果 = "ERROR";*/
+/*	 if risk_blkloan = 3 then 名单贷款事件结果 = "REJECT";*/
+/*else if risk_blkloan = 2 then 名单贷款事件结果 = "REVIEW";*/
+/*else if risk_blkloan = 1 then 名单贷款事件结果 = "ACCEPT";*/
+/*if invoke状态 = "ERROR" then 名单贷款事件结果 = "ERROR";*/
+/*drop risk event_type phone_no type risk_blkloan;*/
+/*run;*/
+/**/
+/**/
+/**/
+/**/
+/**/
+/**/
+
+
+
+
 
 
 ***提交借款申请后跑的TD结果;

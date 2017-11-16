@@ -360,6 +360,6 @@ if execut状态 = "FINISHED" and FSYYS策略_BBB结果 = "" then FSYYS策略_BBB结果 = "
 if execut状态 = "FINISHED" and FSYYS策略_CCC结果 = "" then FSYYS策略_CCC结果 = "Accept";
 
 if execut状态 = "FINISHED" and FSDS策略结果 = "" then FSDS策略结果 = "Accept";
-if execut状态 = "FINISHED" and 关联规则策略结果 = "" then 关联规则策略结果 = "Accept";
+if execut状态 = "FINISHED" and 关联规则策略结果 = "" then 关联规则策略结果 = "Accept";*/;
 
 run;

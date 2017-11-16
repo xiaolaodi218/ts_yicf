@@ -1,12 +1,12 @@
 *******************************
 		申请子主题
 *******************************;
-/*option compress = yes validvarname = any;*/
-/**/
-/*libname lendRaw "D:\mili\Datamart\rawdata\applend";*/
-/*libname dpRaw "D:\mili\Datamart\rawdata\appdp";*/
-/*libname dwdata "D:\mili\Datamart\rawdata\dwdata";*/
-/*libname submart "D:\mili\Datamart\data";*/
+option compress = yes validvarname = any;
+
+libname lendRaw "D:\mili\Datamart\rawdata\applend";
+libname dpRaw "D:\mili\Datamart\rawdata\appdp";
+libname dwdata "D:\mili\Datamart\rawdata\dwdata";
+libname submart "D:\mili\Datamart\data";
 
 
 /*申请审批状态*/
@@ -21,6 +21,15 @@ if status = "REVIEWING" then 申请结果 = "人工复核";
 if status = "HUMAN_CANCEL" then 申请结果 = "人工取消";
 if status = "SYS_AGREE" then 申请结果 = "系统通过";
 if status = "SYS_CANCEL" then 申请结果 = "系统取消";
+
+**众网;
+if status = "EXTERNAL_AGREE" then 申请结果 = "众网_审批通过";
+if status = "EXTERNAL_REFUSE" then 申请结果 = "众网_审批拒绝";
+if status = "EXTERNAL_APPROVING" then 申请结果 = "众网_审批中";
+
+**众网标签;
+if status in ("EXTERNAL_AGREE","EXTERNAL_REFUSE","EXTERNAL_APPROVING") then 订单类型2 = "众网客户订单";
+
 rename apply_date = 申请开始时间 date_created = 申请提交时间;
 run;
 /*apply_info里有重复的几条数据，原因未知，先保留最新的，所以先对last_updated进行了逆序排序*/
@@ -121,12 +130,19 @@ if b;
 最新申请提交日期 = put(datepart(最新申请提交时间), yymmdd10.);
 if customer_name in ("沙振华", "沈正喆") then delete;
 /*25号之前拒绝后再申请的标记为无效申请*/
-if 申请结果 in ("人工通过", "系统通过") then 申请通过 = 1;
-if 申请结果 in ("系统拒绝", "人工拒绝") then 申请拒绝 = 1;
+if 申请结果 in ("人工通过", "系统通过", "众网_审批通过") then 申请通过 = 1;
+if 申请结果 in ("系统拒绝", "人工拒绝", "众网_审批拒绝") then 申请拒绝 = 1;
+
 放款月份 = put(loan_date,yymmn6.);
 if datepart(申请提交时间) > mdy(12,25,2016) or 最新申请 = 1 or 放款日期 ^= "" then 有效申请 = 1;
+
+***上笔订单状态;
+format 上笔订单状态 $20.;
+if 放款状态 =  "304" then 上笔订单状态 = "放款";
+if 放款状态 ^= "304" then 上笔订单状态 = "未放款";
+
 drop 申请提交时间 last_updated 申请开始时间 ip_area first_loan_date 首次申请提交时间 最新申请提交时间 首次申请提交日期 最新申请提交日期
-	status os_type service_amt loan_date;
+	 status os_type service_amt loan_date;
 run;
 
 
@@ -146,13 +162,37 @@ run;
 
 proc sort data = submart.apply_submart out = apply_submart nodupkey; by apply_code; run;
 proc sort data = loan_times nodupkey; by apply_code; run;
+
 data submart.apply_submart;
 merge apply_submart(in = a) loan_times(in = b);
 by apply_code;
 if a;
 format 订单类型 $20.;
-	 if 首次申请 = 1 then 订单类型 = "新客户订单";
+if 首次申请 = 1 then 订单类型 = "新客户订单";
 else if 复贷申请 = 1 then 订单类型 = "复贷客户订单";
-else if desired_product = "MPD10" then 订单类型 = "极速贷订单";
+else if desired_product = "MPD10"  then 订单类型 = "极速贷订单";
 else 订单类型 = "拒绝客户订单";
 run;
+
+
+
+/*data apply_submart1234;*/
+/*merge apply_submart(in = a) loan_times(in = b);*/
+/*by apply_code;*/
+/*if a;*/
+/*format 订单类型 $20. 订单类型1 $20.;*/
+/*if desired_product = "MPD10"  then 订单类型1 = "极速贷订单";*/
+/**/
+/*if 首次申请 = 1 then 订单类型 = "新客户订单";*/
+/*else if 第几次申请>1 or 上笔订单状态 = "放款" then 订单类型 = "正常复贷客户订单";*/
+/*else if 第几次申请>1 or 上笔订单状态 = "未放款" then 订单类型 = "拒绝后复贷客户订单";*/
+/*else 订单类型 = "拒绝客户订单";*/
+/*run;*/
+/**/
+/*run;proc freq data=apply_submart1234 noprint;*/
+/*table 订单类型/out=cac1234;*/
+/*run;*/
+/**/
+/*proc freq data=submart.apply_submart noprint;*/
+/*table 申请结果/out=cac;*/
+

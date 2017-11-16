@@ -23,6 +23,13 @@ data lendRaw.user;
 set lend.user;
 run;
 
+data lendRaw.loan_info;
+set lend.loan_info;
+run;
+
+
+
+
 data lendRaw.user_base_info;
 set lend.user_base_info;
 run;
@@ -39,12 +46,10 @@ data lendRaw.user_relation;
 set lend.user_relation;
 run;
 
+libname lend odbc datasrc=Prod_applend;
+
 data lendRaw.operator_verification;
 set lend.operator_verification;
-run;
-
-data lendRaw.loan_info;
-set lend.loan_info;
 run;
 
 data lendRaw.user_verification_info;

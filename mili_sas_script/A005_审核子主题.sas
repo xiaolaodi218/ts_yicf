@@ -66,9 +66,27 @@ if handle_status = "COMPLETE" and handle_type = "SYSTEM" and handle_result = "CA
 run;
 proc sort data =sys_cancel nodupkey; by apply_code; run;
 
+/*众网拒绝*/
+data zw_refuse;
+set approval_info;
+if handle_status = "COMPLETE" and handle_type = "EXTERNAL" and handle_result = "REJECT";
+run;
+proc sort data =zw_refuse nodupkey; by apply_code; run;
+/*众网通过*/
+data zw_agree;
+set approval_info;
+if handle_status = "COMPLETE" and handle_type = "EXTERNAL" and handle_result = "ACCEPT";
+run;
+proc sort data =zw_agree nodupkey; by apply_code; run;
+/*众网审核中*/
+data zw_init;
+set approval_info;
+if handle_status = "INIT" and handle_type = "EXTERNAL";
+run;
+proc sort data =zw_init nodupkey; by apply_code; run;
 
 data approval;
-set sys_refuse sys_agree human_agree human_refuse sys_init human_init human_cancel sys_cancel;
+set sys_refuse sys_agree human_agree human_refuse sys_init human_init human_cancel sys_cancel zw_refuse zw_agree zw_init;
 run;
 proc sql;
 create table approval as
@@ -91,6 +109,15 @@ else if handle_type = "HUMAN" and handle_result = "ACCEPT" then 审批结果 = "人工
 else if handle_type = "HUMAN" and handle_result = "CANCEL" then 审批结果 = "人工取消"; 
 else if handle_type = "SYSTEM" then 审批结果 = "系统审核中";
 else if handle_type = "HUMAN" then 审批结果 = "人工复核中";
+
+/*else if handle_type = "EXTERNAL" and handle_result = "REJECT" then 审批结果 = "众网拒绝";*/
+/*else if handle_type = "EXTERNAL" and handle_result = "ACCEPT" then 审批结果 = "众网通过";*/
+/*else if handle_type = "EXTERNAL" then 审批结果 = "众网审核中";*/
+
+else if handle_type = "EXTERNAL" and handle_result = "REJECT" then 审批结果 = "系统拒绝";
+else if handle_type = "EXTERNAL" and handle_result = "ACCEPT" then 审批结果 = "系统拒绝";
+else if handle_type = "EXTERNAL" then 审批结果 = "系统拒绝";
+
 drop 审核开始时间 审核更新时间 审核处理时间 审核备注;
 run;
 
