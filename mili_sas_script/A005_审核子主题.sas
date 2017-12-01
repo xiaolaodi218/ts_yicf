@@ -14,8 +14,8 @@ set dpRaw.approval_info;
 ÉóºË´¦ÀíÔÂ·İ = put(datepart(handle_time), yymmn6.);
 ÉóºË¿ªÊ¼ÈÕÆÚ = put(datepart(date_created), yymmdd10.);
 ÉóºË¿ªÊ¼ÔÂ·İ = put(datepart(date_created), yymmn6.);
-rename date_created = ÉóºË¿ªÊ¼Ê±¼ä last_updated = ÉóºË¸üĞÂÊ±¼ä handle_time = ÉóºË´¦ÀíÊ±¼ä remark = ÉóºË±¸×¢;
-drop id handler_id;
+rename date_created = ÉóºË¿ªÊ¼Ê±¼ä last_updated = ÉóºË¸üĞÂÊ±¼ä handle_time = ÉóºË´¦ÀíÊ±¼ä ;
+drop id;
 run;
 /*ÏµÍ³¾Ü¾ø*/
 data sys_refuse;
@@ -118,7 +118,7 @@ else if handle_type = "EXTERNAL" and handle_result = "REJECT" then ÉóÅú½á¹û = "Ï
 else if handle_type = "EXTERNAL" and handle_result = "ACCEPT" then ÉóÅú½á¹û = "ÏµÍ³¾Ü¾ø";
 else if handle_type = "EXTERNAL" then ÉóÅú½á¹û = "ÏµÍ³¾Ü¾ø";
 
-drop ÉóºË¿ªÊ¼Ê±¼ä ÉóºË¸üĞÂÊ±¼ä ÉóºË´¦ÀíÊ±¼ä ÉóºË±¸×¢;
+drop ÉóºË¿ªÊ¼Ê±¼ä ÉóºË¸üĞÂÊ±¼ä ÉóºË´¦ÀíÊ±¼ä;
 run;
 
 

@@ -1,0 +1,19 @@
+option compress = yes validvarname = any;
+libname account odbc datasrc=account_nf;
+libname acc "D:\mili\Datamart\rawdata\account";
+
+data acc.bill_main;
+set account.bill_main(drop = VERSION UPDATED_USER_NAME CREATED_USER_ID REMARK BATCH_NO CURR_PERIOD BUSI_TYPE 
+SKIM_DAYS ACT_OVERDUE_DAYS DEDUCT_STATUS);
+run;
+
+data acc.account_info;
+set account.account_info(drop = COMPLETE_PERIOD UPDATED_USER_NAME CURR_PERIOD  NO_USED_AMT VERSION BRANCH_CODE ID_TYPE
+CREATED_USER_ID REMARK LOAN_NO CUSTOMER_ID INTEREST_FLAG BORROWER_TEL_TOW TEAM_MANAGER CUSTOMER_MANAGER 
+PRODUCT_VERSION ACCOUNT_BUSI_TYPE); 
+run;
+
+data acc.repay_plan;
+set account.repay_plan(drop = VERSION UPDATED_USER_NAME CREATED_USER_ID REMARK CURR_PERIOD ENDING_BALANCE 
+CURR_RECEIVE_SERVICE_FEE_AMT RETURN_SERVICE_FEE MONTH_SERVICE_FEE);
+run;

@@ -23,7 +23,7 @@ call symput("nt", nt);
 run;
 
 /*宏可以跑出周末的报表,使用全局变量*/
-/*%let dt=mdy(10,13,2017);*/
+/*%let dt=mdy(11,29,2017);*/
 
 ***米粒放款客户;
 data mili;
@@ -143,8 +143,8 @@ else if od_days>90 then 报表标签="6ninety_";
 报表金额=sum(CURR_RECEIVE_CAPITAL_AMT,CURR_RECEIVE_INTEREST_AMT);
 if 账户标签="待还款" then 报表金额=贷款余额;
 run;
-proc sort data=repayfin.milipayment_report(where=(cut_date=&dt.)) out=ct_payment_report;by 还款天数;run;
 
+proc sort data=repayfin.milipayment_report(where=(cut_date=&dt.)) out=ct_payment_report;by 还款天数;run;
 
 data repayfin.apply_flag;
 set submart.apply_flag(keep = apply_code loc_abmoduleflag);
@@ -155,16 +155,16 @@ run;
 proc sort data=repayfin.apply_flag ;by contract_no;run;
 proc sort data=repayfin.milipayment_report ;by contract_no;run;
 
-data repayfin.milipayment_report;
+data repayfin.milipayment_report_flag;
 merge repayfin.milipayment_report(in = a) repayfin.apply_flag(in = b);
 by contract_no;
 if a;
 run;
-proc sort data = repayfin.milipayment_report ; by contract_no; run;
+proc sort data = repayfin.milipayment_report_flag ; by contract_no; run;
 
 
-data repayfin.milipayment_report;
-set repayfin.milipayment_report;
+data repayfin.milipayment_report_flag;
+set repayfin.milipayment_report_flag;
 format 策略标签 $30.;
 if loc_abmoduleflag="A" then 策略标签="冠军";
 if loc_abmoduleflag="B" then 策略标签="挑战者";

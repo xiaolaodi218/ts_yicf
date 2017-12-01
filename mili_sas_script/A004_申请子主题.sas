@@ -11,7 +11,7 @@ libname submart "D:\mili\Datamart\data";
 
 /*申请审批状态*/
 data apply_status;
-set dpRaw.apply_info(keep = apply_code status last_updated user_code os_type ip_area date_created apply_date loan_amt period service_amt desired_product);
+set dpRaw.apply_info(keep = apply_code status last_updated user_code date_created apply_date loan_amt period service_amt desired_product);
 format 申请结果 $20.;
 if status = "HUMAN_REFUSE" then 申请结果 = "人工拒绝";
 if status = "SYS_REFUSE" then 申请结果 = "系统拒绝";
@@ -72,7 +72,7 @@ run;
 
 /*首次放款日期*/
 data first_loan_date;
-set lendraw.loan_info(keep = apply_code id_card_no loan_date customer_apply_time customer_name status);
+set lendraw.loan_info(keep = apply_code id_card_no loan_date customer_name status);
 if status = "304";
 rename loan_date = first_loan_date;
 drop status;
@@ -89,7 +89,7 @@ data first_loan_date;
 merge first_loan_date(in = a) apply_user_code(in = b);
 by apply_code;
 if a;
-drop apply_code customer_apply_time id_card_no;
+drop apply_code id_card_no;
 run;
 
 proc sort data = apply_status_2; by user_code; run;
@@ -136,13 +136,13 @@ if 申请结果 in ("系统拒绝", "人工拒绝", "众网_审批拒绝") then 申请拒绝 = 1;
 放款月份 = put(loan_date,yymmn6.);
 if datepart(申请提交时间) > mdy(12,25,2016) or 最新申请 = 1 or 放款日期 ^= "" then 有效申请 = 1;
 
-***上笔订单状态;
-format 上笔订单状态 $20.;
-if 放款状态 =  "304" then 上笔订单状态 = "放款";
-if 放款状态 ^= "304" then 上笔订单状态 = "未放款";
+/****上笔订单状态;*/
+/*format 上笔订单状态 $20.;*/
+/*if 放款状态 =  "304" then 上笔订单状态 = "放款";*/
+/*if 放款状态 ^= "304" then 上笔订单状态 = "未放款";*/
 
-drop 申请提交时间 last_updated 申请开始时间 ip_area first_loan_date 首次申请提交时间 最新申请提交时间 首次申请提交日期 最新申请提交日期
-	 status os_type service_amt loan_date;
+drop 申请提交时间 last_updated 申请开始时间  first_loan_date 首次申请提交时间 最新申请提交时间 首次申请提交日期 最新申请提交日期
+	 status service_amt loan_date;
 run;
 
 
@@ -173,6 +173,38 @@ else if 复贷申请 = 1 then 订单类型 = "复贷客户订单";
 else if desired_product = "MPD10"  then 订单类型 = "极速贷订单";
 else 订单类型 = "拒绝客户订单";
 run;
+
+
+
+
+/*/****申请结果、放款结果;*/*/
+/*data apply_status;*/
+/*set submart.apply_submart(keep = user_code 申请结果 放款状态 第几次申请 申请提交日期 第几次放款 放款日期);*/
+/*run;*/
+/*/*拼上上笔申请信息*/*/
+/*proc sql;*/
+/*create table analysis_data as */
+/*select a.*,*/
+/*           b.申请结果 as 上笔订单申请结果,*/
+/*		   b.放款状态 as 上笔申请放款状态,*/
+/*		   b.申请提交日期 as 上笔申请提交日期*/
+/*from analysisi_data as a*/
+/*left join apply_status as b*/
+/*on a.user_code  = b.user_code and a.第几次申请 = b.第几次申请 + 1*/
+/*;*/
+/*quit;*/;
+
+/*拼上上笔放款信息;*/
+/*proc sql;*/
+/*create table analysis_data as*/
+/*select a.*,*/
+/*          b.第几次申请 as 上笔放款所在申请次数,*/
+/*		  b.放款日期 as 上笔放款日期*/
+/*from analysis_data as a*/
+/*left join apply_status as b*/
+/*on a.user_code = b.user_code and a.第几次放款 = b.第几次放款+1*/
+/*;*/
+/*quit;*/
 
 
 

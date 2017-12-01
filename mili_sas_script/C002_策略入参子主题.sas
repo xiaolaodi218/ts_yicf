@@ -393,12 +393,12 @@ set dpraw.apply_info(keep = apply_code user_code);
 run;
 
 data loc_register_date;
-	if _n_ = 0 then set register_date;
-	if _n_ = 1 then do;
-		declare hash share(dataset:'register_date');
-					share.definekey('user_code');
-					share.definedata(all:'yes');
-					share.definedone();
+	if _n_ = 0 then set register_date;                /*初始化要进行hash的数据集的数据结构*/
+	if _n_ = 1 then do;                               /*定义hash 表的三个要素在内存中生成hash表*/
+		declare hash share(dataset:'register_date');  /*在这里实现在内存中按key值进行排序*/
+					 share.definekey('user_code');
+					 share.definedata(all:'yes');
+					 share.definedone();
 	call missing (of _all_);
 	end;
 	set apply_user_code;
@@ -409,9 +409,9 @@ data event_all;
 	if _n_ = 0 then set loc_register_date;
 	if _n_ = 1 then do;
 		declare hash share(dataset:'loc_register_date');
-					share.definekey('apply_code');
-					share.definedata(all:'yes');
-					share.definedone();
+					 share.definekey('apply_code');
+					 share.definedata(all:'yes');
+					 share.definedone();
 	call missing (of _all_);
 	end;
 	set submart.event_all;

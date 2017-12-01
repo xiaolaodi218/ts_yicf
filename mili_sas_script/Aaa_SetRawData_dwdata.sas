@@ -1,7 +1,7 @@
 option compress = yes validvarname = any;
 
 libname dwdata odbc datasrc = dwdata;
-libname dwRaw "\\DATA\Datamart\rawdata\dwdata";
+libname dwRaw "D:\mili\Datamart\rawdata\dwdata";
 
 data dwRaw.creditx_hit_rule;
 set dwdata.risk_creditx_resp;

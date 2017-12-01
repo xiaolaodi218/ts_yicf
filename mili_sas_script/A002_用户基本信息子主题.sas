@@ -10,7 +10,7 @@
 
 /*用户基本信息*/
 data user_base_info;
-set lendRaw.user_base_info(drop = ID REMARK CREATED_USER_ID CREATED_USER_NAME CREATED_TIME UPDATED_USER_ID UPDATED_USER_NAME UPDATED_TIME VERSION);
+set lendRaw.user_base_info(drop = ID CREATED_TIME UPDATED_TIME );
 if SEX = 0 THEN SEX_NAME = "女"; else if SEX = 1 THEN SEX_NAME = "男";
 run;
 

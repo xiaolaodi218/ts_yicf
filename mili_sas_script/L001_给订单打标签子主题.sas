@@ -31,6 +31,18 @@ proc sort data = silver_apply nodupkey; by apply_code; run;
 proc import out = abmoduleflag datafile = "D:\mili\Datamart\rawdata_csv_py\abmoduleflag\abmoduleflag_req.csv" dbms = csv replace; 
 	getnames = yes; 
 run;
+
+data ab_new ;
+set abmoduleflag;
+format loc_abmoduleflag1 $20.;
+loc_abmoduleflag1 =loc_abmoduleflag;
+run;
+
+data abmoduleflag;
+set ab_new(drop = loc_abmoduleflag);
+rename loc_abmoduleflag1 =loc_abmoduleflag;
+run;
+
 proc sort data = abmoduleflag nodupkey; by id; run;
 
 data abmoduleflag;

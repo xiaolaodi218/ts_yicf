@@ -64,14 +64,44 @@ fsyys_strategy as b on a.main_info_id = b.main_info_id
 quit;
 
 
+/*proc sort data = jbgz nodupkey; by main_info_id; run;*/
+/*proc sort data = fsyys nodupkey; by main_info_id; run;*/
+/**/
+/*data submart.loanBQS_decision_submart;*/
+/*merge jbgz(in = a) fsyys(in = f);*/
+/*by main_info_id;*/
+/*if a;*/
+/*if execut状态 = "FINISHED" and 基本规则策略结果 = "" then 基本规则策略结果 = "Accept";*/
+/*if execut状态 = "FINISHED" and FSYYS策略_挑战者结果 = "" then FSYYS策略_挑战者结果 = "Accept";*/
+/*run;*/
+
+
+***FSYYS_BASE策略;
+data fsyys_strategy_base;
+set dpRaw.bqs_strategy_result(where = (strategy_name = "FSYYS策略_base"));
+rename id = strategy_result_id;
+/*drop date_created last_updated reject_value review_value risk_type strategy_id strategy_mode tips;*/
+run;
+proc sort data = fsyys_strategy_base nodupkey; by main_info_id descending strategy_result_id; run;
+proc sort data = fsyys_strategy_base nodupkey; by main_info_id; run;
+
+proc sql;
+create table fsyys_base as
+select a.main_info_id, b.strategy_result_id, b.strategy_decision as FSYYS策略_BASE结果
+from loanSet_result as a left join 
+fsyys_strategy_base as b on a.main_info_id = b.main_info_id
+;
+quit;
+
 proc sort data = jbgz nodupkey; by main_info_id; run;
 proc sort data = fsyys nodupkey; by main_info_id; run;
+proc sort data = fsyys_base nodupkey; by main_info_id; run;
 
 data submart.loanBQS_decision_submart;
-merge jbgz(in = a) fsyys(in = f);
+merge jbgz(in = a) fsyys(in = f) fsyys_base(in = g);
 by main_info_id;
 if a;
 if execut状态 = "FINISHED" and 基本规则策略结果 = "" then 基本规则策略结果 = "Accept";
 if execut状态 = "FINISHED" and FSYYS策略_挑战者结果 = "" then FSYYS策略_挑战者结果 = "Accept";
-
+if execut状态 = "FINISHED" and FSYYS策略_BASE结果 = "" then FSYYS策略_BASE结果 = "Accept";
 run;
