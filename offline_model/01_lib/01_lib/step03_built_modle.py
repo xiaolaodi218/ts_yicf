@@ -45,15 +45,16 @@ warnings.filterwarnings("ignore")
 def baseline_model(X, y):
     #快速建模方法
     '''#best_params 就是之前取得的最优化参数结果'''
-    model = LogisticRegression()
+    model = LogisticRegression(class_weight = 'balanced')
     model.fit(X, y)
+    #model.get_support()
     y_pred = model.predict(X)
     print("Test set accuracy score: {:.5f}".format(accuracy_score(y, y_pred,)))
     print(classification_report(y, y_pred))
     print("The confusion_matrix is:\n", confusion_matrix(y, y_pred, labels=[0, 1]))
     
     step02_modle_plot.model_evaluation_plot(model, X, y)
-    step02_modle_plot.plot_learning_curve(model, X, y)
+    #step02_modle_plot.plot_learning_curve(model, X, y)
     return model
     
 def train_test_split_data(X, y, random_state=0):
@@ -92,7 +93,7 @@ def model_optimizing(X_train,y_train):
 def make_model(X_train,y_train,X_test, y_test,best_parameters=None):
     #best_params 就是之前取得的最优化参数结果
     if best_parameters == None:
-        model = LogisticRegression()
+        model = LogisticRegression(class_weight = 'balanced')
     else:
         model = LogisticRegression(C = best_parameters['C'],
                                    penalty = best_parameters['penalty']
@@ -122,7 +123,7 @@ def get_lr_formula(model,X):
     return formula
 
 
-def make_scorecard(formular,woe,basescore=620.0,base_odds=50.0/1.0,pdo=50.0):
+def make_scorecard(formular,woe,basescore=600.0,base_odds=50.0/1.0,pdo=50.0):
     """
     一般行业规则，一般设定当odds为50时，score为600
     Odds翻倍时，score+20
@@ -146,10 +147,10 @@ def make_scorecard(formular,woe,basescore=620.0,base_odds=50.0/1.0,pdo=50.0):
     #生成评分卡
     scorecard = pd.DataFrame()
     for i in formular[u"参数"]:
-        woe_frame = woe[woe['var_name'] == i][['var_name','min','max','group','PctRec','bad_rate','WOE']]
+        woe_frame = woe[woe['var_name'] == i][['var_name','interval','min','max','PctRec','bad_rate','WOE']]
         beta_i = formular[formular[u"参数"] == i][u"估计值"].iloc[0]
-        woe_frame['score'] = woe_frame['WOE'].apply(lambda woe : offset/n - factor*(a/n-np.abs(beta_i)*woe))
-        #woe_frame['score'] = woe_frame['WOE'].apply(lambda woe : offset/n - factor*(a/n-beta_i*woe))
+        #woe_frame['score'] = woe_frame['WOE'].apply(lambda woe : offset/n - factor*(a/n-np.abs(beta_i)*woe))
+        woe_frame['score'] = woe_frame['WOE'].apply(lambda woe : offset/n - factor*(a/n+beta_i*woe))
         scorecard = pd.concat((scorecard,woe_frame),axis=0)
         
     return scorecard
@@ -169,7 +170,7 @@ def applyBinMap(X_data, bin_map, var):
     """
     x = X_data[var]
     bin_map = bin_map[bin_map['var_name'] == var]
-    bin_res = np.array([0] * x.shape[-1], dtype=int)
+    bin_res = np.array([0] * x.shape[-1], dtype=float)
     
     for i in bin_map.index:
         upper = bin_map['max'][i]
@@ -177,9 +178,9 @@ def applyBinMap(X_data, bin_map, var):
         if lower == upper:
             x1 = x[np.where(x >= lower)[0]]
         else:
-            x1 = x[np.where((x > lower) & (x <= upper))[0]]  #会去筛选矩阵里面符合条件的值
+            x1 = x[np.where((x >= lower) & (x < upper))[0]]  #会去筛选矩阵里面符合条件的值
         mask = np.in1d(x, x1)    #用于测试一个数组中的值在另一个数组中的成员资格,返回布尔型数组
-        bin_res[mask] = bin_map['group'][i]   #将Ture的数据替换掉
+        bin_res[mask] = bin_map['WOE'][i]   #将Ture的数据替换掉
     
     bin_res = pd.Series(bin_res, index=x.index)
     bin_res.name = x.name
@@ -189,16 +190,38 @@ def applyBinMap(X_data, bin_map, var):
 
 def change_dict_code(scorecard):
     '''
-    构造group和score对应的一个字典,类似下面
+    构造WOE和score对应的一个字典,类似下面
     {score:{2: -1.17, 1: 20.04,0: 75.46}, }
     '''
     dict_code={}
     for i in scorecard.var_name.drop_duplicates():
-        temp=scorecard[scorecard["var_name"]==i].set_index("group").T.to_dict("records")
-        dict_code[i]=temp[6]
+        temp=scorecard[scorecard["var_name"]==i].set_index("WOE").T.to_dict("records")
+        dict_code[i]=temp[5]
     return dict_code
 
 
+def applymap_score(X_data, bin_map, var):
+    """
+    将评分卡结果对原始数据进行分数填充
+    """
+    x = X_data[var]
+    bin_map = bin_map[bin_map['var_name'] == var]
+    bin_res = np.array([0] * x.shape[-1], dtype=float)
+    
+    for i in bin_map.index:
+        upper = bin_map['max'][i]
+        lower = bin_map['min'][i]
+        if lower == upper:
+            x1 = x[np.where(x >= lower)[0]]
+        else:
+            x1 = x[np.where((x >= lower) & (x < upper))[0]]  #会去筛选矩阵里面符合条件的值
+        mask = np.in1d(x, x1)    #用于测试一个数组中的值在另一个数组中的成员资格,返回布尔型数组
+        bin_res[mask] = bin_map['score'][i]   #将Ture的数据替换掉
+    
+    bin_res = pd.Series(bin_res, index=x.index)
+    bin_res.name = x.name
+    
+    return bin_res
 
 
 

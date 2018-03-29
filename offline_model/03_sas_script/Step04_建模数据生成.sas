@@ -113,11 +113,10 @@ proc export DATA= orig_data3
 run;
 
 
-
 /*04---第四次处理*/
 /*本次只收集征信部分数据（刘垚数据），删除缺失值，多重共线等*/
 data target4;
-set orig.target(keep = apply_code target);
+set orig.target;
 if target ^= 2;
 run;
 proc sort data = target4 nodupkey;by apply_code;run;
@@ -131,20 +130,27 @@ run;
 
 proc sort data = orig_data4 nodupkey;by apply_code;run;
 
-/*查看数据的列名*/
-ods trace on;
-proc contents data=orig_data4;
-ods output Variables=need_4;
+data orig_data_develop;
+set orig_data4;
+if 放款月份 in ("201606","201607","201608","201609","201610","201611","201612","201701","201702","201703","201704","201705","201706");
 run;
-ods trace off;
 
-filename export "F:\TS\offline_model\01_Dataset\02_Interim\orig_data_5.csv" encoding='utf-8';
-proc export DATA= orig_data4
+data orig_data_validate ;
+set orig_data4;
+if 放款月份 in ("201707","201708");
+run;
+
+filename export "F:\TS\offline_model\01_Dataset\02_Interim\orig_data_develop.csv" encoding='utf-8';
+proc export DATA= orig_data_develop
 			 outfile = export
 			 dbms = csv replace;
 run;
 
-
+filename export "F:\TS\offline_model\01_Dataset\02_Interim\orig_data_validate.csv" encoding='utf-8';
+proc export DATA= orig_data_validate
+			 outfile = export
+			 dbms = csv replace;
+run;
 
 /*06---第6次处理*/
 /*客户基本信息的数据*/
@@ -172,6 +178,58 @@ ods trace off;
 
 filename export "F:\TS\offline_model\01_Dataset\02_Interim\orig_data_6.csv" encoding='utf-8';
 proc export DATA= orig.orig_data_6
+			 outfile = export
+			 dbms = csv replace;
+run;
+
+
+
+
+
+
+
+
+
+
+/*20170316数据收集全部变量*/
+
+/*客户基本信息的数据*/
+/*本次收集的征信部分数据（刘垚数据），删除缺失值等*/
+
+data target;
+set orig.target(keep = apply_code 放款月份 target);
+if target ^= 2;
+run;
+
+proc sort data = cred.query_in3m nodupkey;by apply_code;run;
+proc sort data = orig.apply_demo_method3 nodupkey;by apply_code;run;
+
+data orig_data_all;
+merge target(in = a) orig.apply_demo_method3(in = b) cred.query_in3m(in = c); 
+by apply_code;
+if a;
+run;
+
+proc sort data = orig_data_all nodupkey;by apply_code;run;
+
+data orig_data_develop;
+set orig_data_all;
+if 放款月份 in ("201606","201607","201608","201609","201610","201611","201612","201701","201702","201703","201704","201705");
+run;
+
+data orig_data_validate ;
+set orig_data_all;
+if 放款月份 in ("201706","201707");
+run;
+
+filename export "F:\TS\offline_model\01_Dataset\02_Interim\orig_data_develop.csv" encoding='utf-8';
+proc export DATA= orig_data_develop
+			 outfile = export
+			 dbms = csv replace;
+run;
+
+filename export "F:\TS\offline_model\01_Dataset\02_Interim\orig_data_validate.csv" encoding='utf-8';
+proc export DATA= orig_data_validate
 			 outfile = export
 			 dbms = csv replace;
 run;

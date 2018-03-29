@@ -1,11 +1,10 @@
 /********************************************************************************************/
 /* Revised log																				*/
 /* 2017-12-08, 新建, Huangdengfeng  						   								    */
-/*																							*/
+/* 2018-03-16, 修改, bad的定义是考虑表现期																						*/
 /********************************************************************************************/
 
 option compress = yes validvarname = any;
-
 /*-----------------------------------------
 代码需要用到的数据来源逻辑库（input libname）
 和代码生成的数据存储逻辑库（output libname）
@@ -23,22 +22,28 @@ data payment;
 set repayFin.payment;
 run;
 
-%let month = '201801';
+%let month = '201803';
 
-data orig.target;
-set payment(where = (month = &month. and mob > 7)
-			keep = 资金渠道 产品小类 apply_code 营业部 产品大类 od_days od_days_ever 
+data target;
+set payment(where = (12 >= mob > 6)
+			keep = 产品小类 apply_code 营业部 产品大类 od_days od_days_ever 
                    month mob 放款月份 es_date es settled LOAN_DATE cut_date);
 if LOAN_DATE >= '01JUN2016'd;	***取2016年6月份开始的放款***;
 if 产品大类 = "续贷" then delete;	***剔除续贷产品***;	
+if not kindex(产品小类 ,"米粒");   ***剔除米粒产品***;	
+run;
+
+proc sort data = target nodupkey; by apply_code descending mob; run;
+proc sort data = target nodupkey; by apply_code;run;
+
+data orig.target;
+set target;
 if cut_date - loan_date - od_days_ever <= 90 then delete;	  ***剔除用天数来推出的前3期就开始逾期且不还的合同，可能是欺诈***;
 if 营业部 in ("怀化市第一营业部","赤峰市第一营业部","呼和浩特市第一营业部") then delete;    ***剔除怀化，赤峰，呼和浩特营业部数据;
 if es = 1 then perf_period = intck("month",loan_date,es_date); else perf_period = mob;	***还款表现期，跟真实的还款期数有一定区别***;
 
-if not kindex(产品小类 ,"米粒");
-
 ************************************
-Bad   —— 曾经逾期30天以上
+Bad   —— 在前12个还款期出现曾经逾期30天以上
 Good  —— 还款表现期大于5（提前结清的是大于5，正常在还的是大于7）且 当前未逾期 且 曾经逾期天数小于8（门店端催回）
 Indet —— 其他
 ************************************;
@@ -50,17 +55,25 @@ sample = 1;
 run;
 
 
-proc tabulate data = orig.target;
-class 产品大类 营业部 target_label 放款月份;
-var sample;
-table (产品大类 ALL), 放款月份 ALL;
-run;
+/*proc tabulate data = orig.target out = aaa;*/
+/*class  营业部 target_label 放款月份;*/
+/*var sample;*/
+/*table (营业部 ALL)*(target_label ALL), 放款月份 ALL;*/
+/*run;*/
+/**/
+/*proc sort data=aaa;by  营业部 target_label;run;*/
+/*proc transpose data=aaa out=bbb prefix=M;*/
+/*by 营业部 target_label;*/
+/*id 放款月份;*/
+/*var N;*/
+/*run;*/
 
 
-proc tabulate data = orig.target;
+proc tabulate data = orig.target out = aaa;
 class 产品大类 营业部 target_label 放款月份;
 var sample;
 table (产品大类 ALL)*(target_label ALL), 放款月份 ALL;
+table (营业部 ALL)*(target_label ALL), (放款月份 ALL);
 table (产品大类 ALL)*(target_label ALL), (放款月份 ALL)*sample*(sum*f=8. pctn<target_label ALL>)/misstext='0' box="产品大类_好坏分布";
 table (营业部 ALL)*(target_label ALL), (放款月份 ALL)*sample*(sum*f=8. pctn<target_label ALL>)/misstext='0' box="营业部_好坏分布";
 keylabel sum='#' pctn='%';
@@ -69,7 +82,8 @@ run;
 
 proc sql;
 create table model_data as
-select 放款月份,count(*) as 放款数 from orig.target group by 放款月份 产品大类;
+select 放款月份,count(*) as 放款数 from orig.target 
+group by 放款月份,产品大类;
 quit;
 
 
@@ -82,8 +96,10 @@ run;
 
 proc sql;
 create table gbi as
-select 放款月份,sum(Bad) as 坏客户, sum(Good) as 好客户, sum(Indet) as 中间客户  from tt group by 放款月份;
+select 放款月份,sum(Bad) as 坏客户, sum(Good) as 好客户, sum(Indet) as 中间客户  from tt 
+group by 放款月份;
 run;
+
 
 
 /**********************************************分割线************************************************/
@@ -146,28 +162,63 @@ run;
 
 
 
-%let month = '201801';
+/*%let month = '201803';*/
+/**/
+/*data data;*/
+/*set payment(where = (12 >= mob > 6)*/
+/*			keep = 产品小类 apply_code 营业部 产品大类 od_days od_days_ever */
+/*                   month mob 放款月份 es_date es settled LOAN_DATE cut_date);*/
+/**/
+/*if LOAN_DATE >= '01JUN2016'd;	***取2016年6月份开始的放款***;*/
+/*if 产品大类 = "续贷" then reloan = 1;	***剔除续贷产品***;	*/
+/*if cut_date - loan_date - od_days_ever <= 90 then fraud = 1;	***剔除用天数来推出的前3期就开始逾期且不还的合同，可能是欺诈***;*/
+/*if 营业部 in ("怀化市第一营业部","赤峰市第一营业部","呼和浩特市第一营业部") then 营业_delete = 1;*/
+/*if es = 1 then perf_period = intck("month",loan_date,es_date); else perf_period = mob;	***还款表现期，跟真实的还款期数有一定区别***;*/
+/**/
+/*if not kindex(产品小类 ,"米粒");*/
+/**/
+/**/
+/*format target_label $10.;*/
+/*	 if od_days_ever > 30 then do; target = 1; target_label = "Bad"; end;*/
+/*else if perf_period > 5 & od_days = 0 & od_days_ever < 8 then do; target = 0; target_label = "Good"; end;*/
+/*else do; target = 2; target_label = "Indet"; end;*/
+/*sample = 1;*/
+/*run;*/
 
-data data;
-set payment(where = (month = &month. and mob > 7)
-			keep = 资金渠道 产品小类 apply_code 营业部 产品大类 od_days od_days_ever 
+
+
+
+data aaa;
+set payment(where = (12 >= mob > 6)
+			keep = 产品小类 apply_code 营业部 产品大类 od_days od_days_ever 
                    month mob 放款月份 es_date es settled LOAN_DATE cut_date);
-
 if LOAN_DATE >= '01JUN2016'd;	***取2016年6月份开始的放款***;
 if 产品大类 = "续贷" then reloan = 1;	***剔除续贷产品***;	
-if cut_date - loan_date - od_days_ever <= 90 then fraud = 1;	***剔除用天数来推出的前3期就开始逾期且不还的合同，可能是欺诈***;
-if 营业部 in ("怀化市第一营业部","赤峰市第一营业部","呼和浩特市第一营业部") then 营业_delete = 1;
+if not kindex(产品小类 ,"米粒");   ***剔除米粒产品***;	
+run;
+
+proc sort data = aaa nodupkey; by apply_code descending mob; run;
+proc sort data = aaa nodupkey; by apply_code;run;
+
+data data;
+set aaa;
+if cut_date - loan_date - od_days_ever <= 90 then  fraud = 1;	  ***剔除用天数来推出的前3期就开始逾期且不还的合同，可能是欺诈***;
+if 营业部 in ("怀化市第一营业部","赤峰市第一营业部","呼和浩特市第一营业部") then 营业_delete = 1;    ***剔除怀化，赤峰，呼和浩特营业部数据;
 if es = 1 then perf_period = intck("month",loan_date,es_date); else perf_period = mob;	***还款表现期，跟真实的还款期数有一定区别***;
 
-if not kindex(产品小类 ,"米粒");
-
-
+************************************
+Bad   —— 在前12个还款期出现曾经逾期30天以上
+Good  —— 还款表现期大于5（提前结清的是大于5，正常在还的是大于7）且 当前未逾期 且 曾经逾期天数小于8（门店端催回）
+Indet —— 其他
+************************************;
 format target_label $10.;
 	 if od_days_ever > 30 then do; target = 1; target_label = "Bad"; end;
 else if perf_period > 5 & od_days = 0 & od_days_ever < 8 then do; target = 0; target_label = "Good"; end;
 else do; target = 2; target_label = "Indet"; end;
 sample = 1;
 run;
+
+
 
 proc sql;
 create table delete_data as

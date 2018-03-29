@@ -123,6 +123,51 @@ def fill_null_data(data):
     imr = imr.fit(data[numColumns])
     data[numColumns] = imr.transform(data[numColumns])
     return data
+
+
+def str_ratio(data,var):
+    #计算每个分类变量的逾期率情况，看情况合并
+
+    str_value = pd.DataFrame([])
+    for v in var:
+        Customer_0 = data[v][data.y == 0].value_counts()
+        Customer_1 = data[v][data.y == 1].value_counts()
+        df_ratio=pd.DataFrame({u'坏客户':Customer_1, u'好客户':Customer_0})
+        df_ratio['total'] = df_ratio['坏客户']+df_ratio['好客户']
+        df_ratio['bad_ratio'] = df_ratio['坏客户']/(df_ratio['total'])
+        df_ratio['pct_rec'] =  df_ratio['total']/data.shape[0]
+        df_ratio['varname'] = v
+        str_value = pd.concat([str_value,df_ratio], axis = 0)
+    str_value = str_value.reset_index()
+    return str_value
+
+
+def abnormal_check(data):
+##异常值检测
+    plt.rcParams['font.sans-serif'] = ['SimHei'] #用来正常显示中文标签
+    plt.rcParams['axes.unicode_minus'] = False #用来正常显示负号
+    
+    for var in data.columns:
+    
+        plt.figure() #建立图像
+        data_var = data[[var]]
+        data_var.plot(kind = 'box')
+        #p = data_var.boxplot(return_type='dict') #画箱线图，直接使用DataFrame的方法
+#==============================================================================
+#         x = p['fliers'][0].get_xdata() # 'flies'即为异常值的标签
+#         y = p['fliers'][0].get_ydata()
+#         y.sort() #从小到大排序，该方法直接改变原对象
+#     
+#         #其中有些相近的点，注解会出现重叠，难以看清，需要一些技巧来控制。
+#         #以下参数都是经过调试的，需要具体问题具体调试。
+#         for i in range(len(x)): 
+#           if i>0:
+#             plt.annotate(y[i], xy = (x[i],y[i]), xytext=(x[i]+0.05 -0.8/(y[i]-y[i-1]),y[i]))
+#           else:
+#             plt.annotate(y[i], xy = (x[i],y[i]), xytext=(x[i]+0.08,y[i]))
+#==============================================================================
+        
+        plt.show() #展示箱线图
  
 
 ##离群点检测
@@ -343,7 +388,7 @@ def rdlg_variables(X, y, threshold=0.25):#默认阈值0.25
     scoretable = pd.DataFrame(rlr.all_scores_, index = X.columns) #汇总最终确定特征得分
     scoretable = scoretable.reset_index()    
     scoretable = scoretable.rename(columns = {'index':'Col', 0:'value_retio'}, copy = False)    
-    df_score = scoretable[scoretable.value_retio < threshold] #删掉缺失值<0.25的数据   
+    df_score = scoretable[scoretable.value_retio > threshold] #删掉缺失值<0.25的数据   
     refesh_data = X[list(df_score['Col'])] 
          
     return scoretable,refesh_data

@@ -44,10 +44,10 @@ df = df.rename(columns = {'target':'y'}, copy = False)
 df.groupby('y').size()
 '''
 y
-0    2867
-1     527
+0    2408
+1     346
 dtype: int64
-15.5%
+12.6%
 odds = 7.12
 '''
 
@@ -73,13 +73,13 @@ df1 = df.drop(['apply_code','放款月份','进件时间','是否有车','是否
 "manaquery_in1m_f","manaquery_in24m","manaquery_in24m_def","manaquery_in24m_f","manaquery_in3m",
 "manaquery_in3m_def","manaquery_in3m_f","manaquery_in6m","manaquery_in6m_def","manaquery_in6m_f",
 "pettyloan_query_in1m","pettyloan_manaquery_in1m","pettyloan_query_in3m","pettyloan_manaquery_in3m",
-"pettyloan_query_in6m","pettyloan_manaquery_in6m","pettyloan_query_in12m",
+"pettyloan_query_in6m","pettyloan_manaquery_in6m","pettyloan_query_in12m", "pettyloan_loquery_in3m",
 "pettyloan_manaquery_in12m","pettyloan_query_in24m","pettyloan_loquery_in24m","pettyloan_manaquery_in24m",
 "card_num_fo","consumloan_num","otherloan_num","max_carloan_line","min_carloan_line",
 "ave_carloan_line","sum_carloan_line","max_manloan_line","min_manloan_line","ave_manloan_line",
 "sum_manloan_line","near_newopen_manloan","max_houseloan_line","min_houseloan_line","ave_houseloan_line",
 "sum_houseloan_line","max_percosloan_line","min_percosloan_line","ave_percosloan_line","sum_percosloan_line",
-], axis = 1)
+"highconsum_loan_num","loquery_pettyloan_com_num","inac_card_rate","can_card_num"], axis = 1)
 
 #======================================== 同值化，缺失值检验======================================
 
@@ -147,11 +147,11 @@ df6 = df5.rename(columns = {
 ##将y标签移到最后一列
 last = df1['y']
 df6.drop(labels=['y'], axis=1,inplace = True)
-df6.insert(157, 'y', last)
+df6.insert(152, 'y', last)
 
 #======================================== 变量筛选，IV值和相关系数======================================
 
-#IV保留大于0.02的变量，158个变量保留111个
+#IV保留大于0.02的变量，156个变量保留119个
 new_data,iv_value = step01_feature_engine.filter_iv(df6, group=10)
 
 #对数据按照IV大小顺序进行排序，以便于使用fillter_pearson删除相关性较高里面IV值低的数据
@@ -166,21 +166,21 @@ pearson_coef = step02_modle_plot.plot_pearson(df7)
 
 #多变量分析，保留相关性低于阈值0.6的变量
 #对产生的相关系数矩阵进行比较，并删除IV比较小的变量
-per_col = step02_modle_plot.fillter_pearson(pearson_coef, threshold = 0.60)
+per_col = step02_modle_plot.fillter_pearson(pearson_coef, threshold = 0.50)
 print ('保留了变量有:',len(per_col))
-print (per_col)   #135个变量,保留35个
-df8 = df6[[          
-       'selfquery_cardquery_in6m', 'group_level',
-       'housing_nature_g','selfquery6_in3m', 'selfquery_in3m_min_interval',
-       'selfquery_loquery_cardquery_in1m', 'pettyloan_loquery_in6m',
-       'local_nolocal_g', 'social_fund_basenum', 'desired_loan_amt_g',
-       'asset_g', 'mean_cardline', 'loquery_in24m_def', 'month_other_income_g',
-       'apply_city_g', 'max_loanline', 'near_open_loan', 'salary_grant_type_g',
-       'credit_use_ratio', 'card_cardquery_rate', 'sex_g', 'min_cardline',
-       'com_cardquery_max_in3m', 'card_num', 'company_nature_g',
-       'near_newopen_carloan', 'com_loquery_max_in3m', 'work_years',
-       'near_open_percosloan', 'min_cardline_f', 'normal_card_num',
-       'other_debet', 'clear_loan_num', 'married_g', 'cal_debat_ratio2','y']]  
+print (per_col)   #135个变量,保留49个
+df8 = df6[[                 
+        'selfquery_cardquery_in6m', 'group_level', 'housing_nature_g',
+       'local_nolocal_g', 'selfquery_loquery_cardquery_in1m',
+       'social_fund_basenum', 'pettyloan_loquery_in6m',
+       'selfquery_in3m_min_interval', 'asset_g', 'desired_loan_amt_g',
+       'max_cardline_f', 'use_card_num', 'card_cardquery_rate', 'apply_city_g',
+       'near_open_loan', 'month_other_income_g', 'company_nature_g',
+       'max_loanline', 'far_open_loan', 'near_newopen_carloan', 'loan_num',
+       'min_cardline', 'sex_g', 'card_num', 'other_debet',
+       'salary_grant_type_g', 'month_salary', 'near_open_percosloan',
+       'min_cardline_f', 'credit_use_ratio', 'education_g', 'age',
+       'com_loquery_max_in3m','y']]  
 
 pearson_coef = step02_modle_plot.plot_pearson(df8)  #再次观察共线情况
 per_new_data,iv_new_value = step01_feature_engine.filter_iv(df8, group=10)
